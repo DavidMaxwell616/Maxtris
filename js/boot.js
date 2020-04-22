@@ -4,15 +4,15 @@ const FIELD_WIDTH = 15;
 const FIELD_HEIGHT = 20;
 const MAX_BLOCKS = 164;
 const ROW_FULL = 11;
-
+var hiscore = 0;
 var varro_state = 0;
 var gameover = 0;
 var start_level, turn = 0; //start from level selected under options
 var start_blocks; //number of initial rows on the map
-var block = [4][4]; //current block
-var newblock = [4][4];
-var next_block, next_next_block; //next block to be put
-var map = [FIELD_WIDTH][FIELD_HEIGHT]; //map
+var block = []; //current block
+var newblock = [];
+var next_block; //next block to be put
+var map = [FIELD_WIDTH, FIELD_HEIGHT]; //map
 var block_x, block_y; //location of the block
 var x_size, y_size; //size of the block
 var next_x_size, next_y_size; //size of the block
@@ -25,3 +25,5 @@ var high_score;
 var Level;
 var numblocks, index, blockcount;
 var startGame = false;
+var graphics;
+var objectData;

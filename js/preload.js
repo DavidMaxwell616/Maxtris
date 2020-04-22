@@ -5,13 +5,16 @@ function preload() {
   this.scale.refresh();
 
   showLoader(this);
-  this.load.path = '../assets/';
+  this.load.path = '../assets/images/';
   this.load.image('splash', 'splash.bmp');
   this.load.image('maxxdaddy', 'maxxdaddy.gif');
   this.load.spritesheet('blocks', 'blocks.png', {
     frameWidth: 20,
     frameHeight: 20
   }, );
+
+  this.load.path = '../assets/json/';
+  this.load.json('objectData', 'blockMap.json');
 
 }
 
