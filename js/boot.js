@@ -4,26 +4,27 @@ const FIELD_WIDTH = 15;
 const FIELD_HEIGHT = 20;
 const MAX_BLOCKS = 164;
 const ROW_FULL = 11;
+const BLOCK_SIZE = 20;
 var hiscore = 0;
-var varro_state = 0;
 var gameover = 0;
-var start_level, turn = 0; //start from level selected under options
-var start_blocks; //number of initial rows on the map
-var block = []; //current block
-var newblock = [];
-var next_block; //next block to be put
-var map = [FIELD_WIDTH, FIELD_HEIGHT]; //map
+var oldBlocks = []; 
+var blocks = [];
+var nextBlocks = [];
+var map = []; //map
 var block_x, block_y; //location of the block
-var x_size, y_size; //size of the block
-var next_x_size, next_y_size; //size of the block
-var timer; //timer of the game
-var current_newblock, current_block; //current block type
-var block_color, newblock_color, oldblock_color;
-var speed; //speed of the game
-var score, dels; //game score and number of rows deleted
+var x_size, y_size; //size of the block formation
 var high_score;
-var Level;
-var numblocks, index, blockcount;
+var level;
 var startGame = false;
 var graphics;
 var objectData;
+var leftKey;
+var	rightKey;
+var	upKey;
+var	downKey;
+var	spaceKey;
+var block;
+var dropping = false;
+var score = 0;
+var timer;
+var speed = 200;
