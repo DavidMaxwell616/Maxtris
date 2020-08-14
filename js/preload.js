@@ -10,7 +10,7 @@ function preload() {
   //this.load.image('maxxdaddy', 'maxxdaddy.gif');
   this.load.spritesheet('blocks', 'blocks.png', 20,20,6 );
   this.load.path = '../assets/json/';
-  this.load.json('objectData', 'blockMap.json');
+  this.load.json('shapes', 'shapes.json');
   this.load.start();
 }
 

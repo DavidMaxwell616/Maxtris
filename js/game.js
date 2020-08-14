@@ -11,17 +11,10 @@ function create() {
  graphics.beginFill(0x000000, 1.0);
  graphics.drawRect(NEXT_BLOCK_LEFT, NEXT_BLOCK_TOP, 120, 100);
 
- currentBlocks = game.add.group();
- oldBlocks = game.add.group();
- nextBlocks = game.add.group();
- blocks = game.add.sprite(0,0,'blocks');
- blocks.visible = false;
- objectData = this.cache.getJSON('objectData');
- var blockNum = game.rnd.integerInRange(1, 7);
- showNewBlocks(blockNum);
- nextBlockNum = game.rnd.integerInRange(1, 7);
- showNextBlocks(nextBlockNum);
- game.add.text(
+ shapesJSON = this.cache.getJSON('shapes');
+ shapes = shapesJSON.shapes;
+ 
+  game.add.text(
   game.world.width * 0.61,
   game.world.height * 0.1,
   "MAXTRIS!", {
@@ -57,132 +50,305 @@ highScoreText = game.add.text(
     fill: 0xFFFFF2D,
   },
 );
-var upKey = game.input.keyboard.addKey(Phaser.Keyboard.UP);
-upKey.onDown.add(rotateBlocks,this);
 
-var leftKey = game.input.keyboard.addKey(Phaser.Keyboard.LEFT);
-leftKey.onDown.add(moveLeft,this);
+upKey = game.input.keyboard.addKey(Phaser.Keyboard.UP);
+leftKey = game.input.keyboard.addKey(Phaser.Keyboard.LEFT);
+rightKey = game.input.keyboard.addKey(Phaser.Keyboard.RIGHT);
+downKey = game.input.keyboard.addKey(Phaser.Keyboard.DOWN);
+ 
+// Create an empty board filled with nulls
+board = new Array(BOARD_HEIGHT);
+for(i = 0; i < BOARD_HEIGHT; i++) {
+  board[i] = new Array(BOARD_WIDTH);
+  for(j = 0; j < BOARD_WIDTH; j++) {
+    board[i][j] = null;
+  }
+}
 
-var rightKey = game.input.keyboard.addKey(Phaser.Keyboard.RIGHT);
-rightKey.onDown.add(moveRight,this);
+// Create Shapes
+ nextShape = Shape;
+ randomizeShape(nextShape);
+ previewShape();
+ 
+ activeShape = Shape;
+ randomizeShape(activeShape);
+ activateShape();
 
-var downKey = game.input.keyboard.addKey(Phaser.Keyboard.DOWN);
-downKey.onDown.add(moveDown,this);
+};
+
+function randomizeShape(shape) {
+    
+  shape.type = Math.floor(Math.random() * NUM_SHAPE_TYPES);
+  shape.orientation = Math.floor(Math.random() * NUM_ORIENTATIONS);
+  shape.color = Math.floor(Math.random() * NUM_COLORS);
+ 
+  initBlocks(shape);
+};
+
+function initBlocks(shape){
+  var i;
+  for(i = 0; i < NUM_BLOCKS_IN_SHAPE; i++) {
+    shape.blocks[i] = Block;
+  }
 
 }
 
-function showNewBlocks(blockNum){
-   newBlock = objectData.blockData[0]['shape'+blockNum];
+function previewShape() {
+    
+  //TODO
+};
 
-  var y=0;
-  newBlock.forEach(element => {
-  for (let index = 0; index < element.length; index++) {
-    const block = element[index];
-    if(block>0){
-      var b = currentBlocks.create(LEFT_WALL + index * BLOCK_SIZE, y*BLOCK_SIZE, 'blocks');
-      b.frame = blockNum;
-      b.anchor.x = 0;
-      b.anchor.y = 0;
-    }
-    }
-    y++;
-    });
-}
-
-function showNextBlocks(nextBlockNum){
+function clearPreview() {
   
- nextBlock = objectData.blockData[0]['shape'+nextBlockNum];
+  //TODO
+};
 
- var y=0;
- nextBlock.forEach(element => {
- for (let index = 0; index < element.length; index++) {
-   const block = element[index];
-   if(block>0){
-     var b = nextBlocks.create(NEXT_BLOCK_LEFT + BLOCK_SIZE+index * BLOCK_SIZE, NEXT_BLOCK_TOP + BLOCK_SIZE+ y*BLOCK_SIZE, 'blocks');
-     b.frame = nextBlockNum;
-     b.anchor.x = 0;
-     b.anchor.y = 0;
-   }
-   }
-   y++;
-   });
-}
+function activateShape() {
+  activeShape.shape = shapes[activeShape.type];
+  activeShape.centerX = activeShape.shape.orientation[activeShape.orientation].startingLocation.x;
+  activeShape.centerY = activeShape.shape.orientation[activeShape.orientation].startingLocation.y;
+  
+  var i, newX, newY;
 
-function update() {
-  timer++;
-  if (timer > speed) 
-    {
-      moveBlocks();
-      timer = 0;
-    }
+  for(i = 0; i < activeShape.blocks.length; i++) {
+    newX = activeShape.centerX + activeShape.shape.orientation[activeShape.orientation].blockPosition[i].x;
+    newY = activeShape.centerY + activeShape.shape.orientation[activeShape.orientation].blockPosition[i].y;
+    makeBlock(activeShape.blocks[i], newX, newY, activeShape.color);
   }
+};
 
-  function moveRight(){
-      currentBlocks.forEach(block => {
-        if(block.x+block.width<=RIGHT_WALL) 
-        block.x+=BLOCK_SIZE;      
-      });
-    }
+function makeBlock(block, newX, newY, newColor) {
 
-function moveLeft(){
-    currentBlocks.forEach(block => {
-      if(block.x>LEFT_WALL) 
-      block.x-=BLOCK_SIZE;      
-    });
-  }
+  x = newX;
+  y = newY;
+  color = newColor;
+  
+  var spriteLocation = getSpriteLocation(block);
+  
+  block.sprite = game.add.sprite(spriteLocation.x, spriteLocation.y, 'blocks', color);
+};
 
-function moveDown(){
+function getSpriteLocation(block) {
+    
+  var spriteX, spriteY;
+  spriteX = LEFT_WALL + (block.x * BLOCK_WIDTH);
+  spriteY =  block.y * BLOCK_WIDTH;
+  
+  return {"x": spriteX, "y": spriteY};
+};
 
-}
+function clearBlock(block) {
+    
+  block.x = null;
+  block.y = null;
+  block.color = null;
+  block.sprite.destroy();
+  block.sprite = null;
+};
 
-  function rotateBlocks()
-  {
-    const indices = [0, 1, 2,3];
-    const flipMatrix = indices.map(index => (
-      newBlock.map(row => row[index])
-    ));
-    var y = 0;
-    newBlock.forEach(element => {
-    for (let index = 0; index < element.length; index++) {
-      const block = element[index];
-    if(block>0){
-      newBlock[y].x = 50 + index * 20;
-      newBlock[y].y = y*20;
-    }
-  }
-y++;
-}); 
-}
-
-function addToOldBlocks(){
-  currentBlocks.forEach(block => {
-    oldBlocks.add(block);
-  });
-  currentBlocks.removeAll(true,true, false);
-  nextBlocks.removeAll(true,true, false);
-}
-
-function moveBlocks(){
-    currentBlocks.forEach(block => {
-        if (block.y + block.height >= FLOOR) 
-       {
-          addToOldBlocks();
-          // showNewBlocks(nextBlockNum);
-          // nextBlockNum = game.rnd.integerInRange(1, 7);
-          // showNextBlocks(nextBlockNum);
-          return;
+function update(){
+  if(turnCounter >= turnLength) {
+      
+    if(activeShape !== null && canMoveShape(DOWN)) {
+      moveShape(DOWN);
+      
+    } else {
+      
+      placeShapeInBoard();
+      completedRows = getCompleteRows();
+      
+      if (completedRows.length > 0) {
+        
+        clearRow(completedRows);
+        isUpdatingAfterRowClear = true;
+        
+      } else {
+        showShapes();
       }
-
-      oldBlocks.forEach(oldBlock => {
-        if (block.x==oldBlock.x && block.y + block.height ==oldBlock.y) 
-       {
-          addToOldBlocks();
-          // showNewBlocks(nextBlockNum);
-          // nextBlockNum = game.rnd.integerInRange(1, 7);
-          // showNextBlocks(nextBlockNum);
-          return;
-      }
-      });
-        block.y+=FIELD_HEIGHT;
-      });
+      
+      completedRows = [];
     }
+    turnCounter = 0;
+    
+  } else if (isUpdatingAfterRowClear) {
+    
+    if(turnCounter >= turnLength/10) {
+      isUpdatingAfterRowClear = false;
+      promoteShapes();
+    } else {
+      turnCounter++;
+    }
+  } else {
+    
+    handleInput();
+    turnCounter++;
+    
+  }
+}
+
+
+function clearActive() {
+    
+  activeShape.type = null;
+  activeShape.orientation = null;
+  activeShape.color = null;
+
+  activeShape.centerX = null;
+  activeShape.centerY = null;
+
+  activeShape.blocks = null;
+};
+
+function placeShapeInBoard() {
+  
+  var i, block;
+  for(i = 0; i < activeShape.blocks.length; i++) {
+    block = activeShape.blocks[i];
+    board[block.y][block.x] = activeShape.blocks[i];
+  }
+};
+
+function isOnBoard(x, y) {
+  return(x >= 0 && y >= 0 && 
+     x < BOARD_WIDTH && y < BOARD_HEIGHT);
+};
+
+function isOccupied(x, y) {
+  return (board[y][x] != null);
+};
+
+function canMoveShape(direction) {
+  
+  var i, newX, newY;
+
+  for(i = 0; i < activeShape.blocks.length; i++) {
+    switch(direction) {
+      case DOWN:
+        newX = activeShape.blocks[i].x;
+        newY = activeShape.blocks[i].y + 1;
+        break;
+      case LEFT:
+        newX = activeShape.blocks[i].x - 1;
+        newY = activeShape.blocks[i].y;
+        break;
+      case RIGHT:
+        newX = activeShape.blocks[i].x + 1;
+        newY = activeShape.blocks[i].y;
+        break;
+    }
+    if (!isOnBoard(newX, newY) || isOccupied(newX, newY)) {
+      return false;
+    }
+  }
+  return true;
+};
+  
+function moveShape(direction) {
+  
+  if(!canMoveShape(direction)){
+    throw "Cannot move active shape in direction: " + direction;
+  }
+  
+  var i, newX, newY;
+  
+  // Move the Shape's blocks
+  for(i = 0; i < activeShape.blocks.length; i++) {
+    switch(direction) {
+      case DOWN:
+        newX = activeShape.blocks[i].x;
+        newY = activeShape.blocks[i].y + BLOCK_WIDTH;
+        break;
+      case LEFT:
+        newX = activeShape.blocks[i].x - BLOCK_WIDTH;
+        newY = activeShape.blocks[i].y;
+        break;
+      case RIGHT:
+        newX = activeShape.blocks[i].x + BLOCK_WIDTH;
+        newY = activeShape.blocks[i].y;
+        break;
+    }  
+    moveBlock(activeShape.blocks[i],newX, newY);
+  }
+  
+  // Update the Shape's center
+  switch(direction) {
+    case DOWN:
+      activeShape.centerX += 0;
+      activeShape.centerY += 1;
+      break;
+    case LEFT:
+      activeShape.centerX += -1;
+      activeShape.centerY += 0;
+      break;
+    case RIGHT:
+      activeShape.centerX += 1;
+      activeShape.centerY += 0;
+      break;
+  }
+};
+
+function canRotate() {
+  
+  
+  var i, newX, newY, newOrientation;
+  newOrientation = (orientation + 1) % NUM_ORIENTATIONS;
+  
+  for(i = 0; i < blocks.length; i++) {
+    newX = centerX + shape.orientation[newOrientation].blockPosition[i].x;
+    newY = centerY + shape.orientation[newOrientation].blockPosition[i].y;      
+    
+    if (!isOnBoard(newX, newY) || isOccupied(newX, newY)) {
+      return false;
+    }
+  }
+  return true;
+};
+  
+function rotate() {
+  
+  if(!canRotate()) {
+    throw "Cannot rotate active shape";
+  }
+  
+  var i, newX, newY, newOrientation;
+  newOrientation = (orientation + 1) % NUM_ORIENTATIONS;
+  for(i = 0; i < blocks.length; i++) {
+    newX = centerX + shape.orientation[newOrientation].blockPosition[i].x;
+    newY = centerY + shape.orientation[newOrientation].blockPosition[i].y;      
+    moveBlock(blocks[i], newX, newY);
+  }
+  orientation = newOrientation;
+  isTweening = true;
+};
+
+function moveBlock(block, newX, newY) {
+    
+  block.x = newX;
+  block.y = newY;
+    
+  block.sprite.x = newX;
+  block.sprite.y = newY;
+};
+
+function handleInput() {
+  
+    if (upKey.isDown) {
+    if (activeShape.canRotate()) {        
+      activeShape.rotate();
+    }
+  } else if (leftKey.isDown) {
+    
+    if (activeShape.canMoveShape(LEFT)) {
+      activeShape.moveShape(LEFT);
+    }
+    
+  } else if (rightKey.isDown) {
+    
+    if (activeShape.canMoveShape(RIGHT)) {        
+      activeShape.moveShape(RIGHT);
+    }
+    
+  } else if (downKey.isDown) {
+    turnCounter += turnLength/5;
+  }
+};
