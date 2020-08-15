@@ -52,10 +52,18 @@ highScoreText = game.add.text(
 );
 
 upKey = game.input.keyboard.addKey(Phaser.Keyboard.UP);
+upKey.onDown.add(function(event) {
+  if (canRotate()) rotate(); }, this);  
 leftKey = game.input.keyboard.addKey(Phaser.Keyboard.LEFT);
+leftKey.onDown.add(function(event) {
+  if (canMoveShape(LEFT)) moveShape(LEFT);}, this);  
 rightKey = game.input.keyboard.addKey(Phaser.Keyboard.RIGHT);
+rightKey.onDown.add(function(event) {
+  if (canMoveShape(RIGHT)) moveShape(RIGHT);}, this);  
 downKey = game.input.keyboard.addKey(Phaser.Keyboard.DOWN);
- 
+downKey.onDown.add(function(event) {
+  turnCounter += turnLength/5;}, this);  
+  
 // Create an empty board filled with nulls
 board = new Array(BOARD_HEIGHT);
 for(i = 0; i < BOARD_HEIGHT; i++) {
@@ -94,13 +102,25 @@ function initBlocks(shape){
 }
 
 function previewShape() {
-    
-  //TODO
+  for(i = 0; i < NUM_BLOCKS_IN_SHAPE; i++) {
+    var block = nextShape.blocks[i];
+  var spriteLocation = getNextSpriteLocation(block);
+  block.sprite = game.add.sprite(spriteLocation.x, spriteLocation.y, 'blocks', nextShape.color);
+  }    
 };
 
 function clearPreview() {
-  
-  //TODO
+  for(i = 0; i < NUM_BLOCKS_IN_SHAPE; i++) {
+    clearBlock(nextShape.blocks[i]);
+  }
+  nextShape.type = null;
+  nextShape.orientation = null;
+  nextShape.color = null;
+
+  nextShape.centerX = null;
+  nextShape.centerY = null;
+
+  nextShape.blocks = null;
 };
 
 function activateShape() {
@@ -113,6 +133,7 @@ function activateShape() {
   for(i = 0; i < activeShape.blocks.length; i++) {
     newX = activeShape.centerX + activeShape.shape.orientation[activeShape.orientation].blockPosition[i].x;
     newY = activeShape.centerY + activeShape.shape.orientation[activeShape.orientation].blockPosition[i].y;
+    
     makeBlock(activeShape.blocks[i], newX, newY, activeShape.color);
   }
 };
@@ -123,16 +144,22 @@ function makeBlock(block, newX, newY, newColor) {
   y = newY;
   color = newColor;
   
-  var spriteLocation = getSpriteLocation(block);
-  
+  var spriteLocation = getSpriteLocation(block);    
   block.sprite = game.add.sprite(spriteLocation.x, spriteLocation.y, 'blocks', color);
 };
 
 function getSpriteLocation(block) {
-    
   var spriteX, spriteY;
-  spriteX = LEFT_WALL + (block.x * BLOCK_WIDTH);
-  spriteY =  block.y * BLOCK_WIDTH;
+  spriteX = LEFT_WALL + (block.x * BLOCK_SIZE);
+  spriteY =  block.y * BLOCK_SIZE;
+  
+  return {"x": spriteX, "y": spriteY};
+};
+
+function getNextSpriteLocation(block) {
+  var spriteX, spriteY;
+  spriteX = NEXT_BLOCK_LEFT + (block.x * BLOCK_SIZE);
+  spriteY = NEXT_BLOCK_TOP + block.y * BLOCK_SIZE;
   
   return {"x": spriteX, "y": spriteY};
 };
@@ -163,7 +190,7 @@ function update(){
         isUpdatingAfterRowClear = true;
         
       } else {
-        showShapes();
+        promoteShapes();
       }
       
       completedRows = [];
@@ -180,12 +207,23 @@ function update(){
     }
   } else {
     
-    handleInput();
     turnCounter++;
     
   }
 }
 
+function promoteShapes() {
+
+  activeShape = null;
+
+  clearPreview();
+  activeShape = nextShape;
+  activateShape();
+
+  nextShape = Shape;
+  randomizeShape(nextShape);
+  previewShape();
+};
 
 function clearActive() {
     
@@ -245,10 +283,6 @@ function canMoveShape(direction) {
   
 function moveShape(direction) {
   
-  if(!canMoveShape(direction)){
-    throw "Cannot move active shape in direction: " + direction;
-  }
-  
   var i, newX, newY;
   
   // Move the Shape's blocks
@@ -256,14 +290,14 @@ function moveShape(direction) {
     switch(direction) {
       case DOWN:
         newX = activeShape.blocks[i].x;
-        newY = activeShape.blocks[i].y + BLOCK_WIDTH;
+        newY = activeShape.blocks[i].y + 1;
         break;
       case LEFT:
-        newX = activeShape.blocks[i].x - BLOCK_WIDTH;
+        newX = activeShape.blocks[i].x - 1;
         newY = activeShape.blocks[i].y;
         break;
       case RIGHT:
-        newX = activeShape.blocks[i].x + BLOCK_WIDTH;
+        newX = activeShape.blocks[i].x + 1;
         newY = activeShape.blocks[i].y;
         break;
     }  
@@ -318,37 +352,14 @@ function rotate() {
     moveBlock(blocks[i], newX, newY);
   }
   orientation = newOrientation;
-  isTweening = true;
 };
 
 function moveBlock(block, newX, newY) {
     
   block.x = newX;
   block.y = newY;
-    
-  block.sprite.x = newX;
-  block.sprite.y = newY;
+  var spriteLocation = getSpriteLocation(block,newX,newY);
+  block.sprite.x = spriteLocation.x;
+  block.sprite.y = spriteLocation.y;
 };
 
-function handleInput() {
-  
-    if (upKey.isDown) {
-    if (activeShape.canRotate()) {        
-      activeShape.rotate();
-    }
-  } else if (leftKey.isDown) {
-    
-    if (activeShape.canMoveShape(LEFT)) {
-      activeShape.moveShape(LEFT);
-    }
-    
-  } else if (rightKey.isDown) {
-    
-    if (activeShape.canMoveShape(RIGHT)) {        
-      activeShape.moveShape(RIGHT);
-    }
-    
-  } else if (downKey.isDown) {
-    turnCounter += turnLength/5;
-  }
-};

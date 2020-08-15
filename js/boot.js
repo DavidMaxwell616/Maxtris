@@ -73,8 +73,7 @@ var  NUM_BLOCKS_IN_SHAPE = 4,
   };
   
     // Asset Sizes
-var BLOCK_WIDTH = 20,
-    BOARD_WIDTH = 10,
+var BOARD_WIDTH = 10,
     BOARD_HEIGHT = 16;
     
     // Movement Directions
