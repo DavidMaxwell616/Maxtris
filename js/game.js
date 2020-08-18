@@ -76,11 +76,13 @@ for(i = 0; i < BOARD_HEIGHT; i++) {
 // Create Shapes
  nextShape = Shape;
  randomizeShape(nextShape);
- previewShape();
- 
+ nextShape.label = 'nextShape';
+ activateShape(nextShape);
+  
  activeShape = Shape;
  randomizeShape(activeShape);
- activateShape();
+ activeShape.label = 'activeShape';
+ activateShape(activeShape);
 
 };
 
@@ -101,12 +103,11 @@ function initBlocks(shape){
 
 }
 
-function previewShape() {
-  for(i = 0; i < NUM_BLOCKS_IN_SHAPE; i++) {
-    var block = nextShape.blocks[i];
-  var spriteLocation = getNextSpriteLocation(block);
-  block.sprite = game.add.sprite(spriteLocation.x, spriteLocation.y, 'blocks', nextShape.color);
-  }    
+function previewShape(block, newX, newY) {
+  block.x = newX;
+  block.y = newY;
+    var spriteLocation = getNextSpriteLocation(block);
+    block.sprite = game.add.sprite(spriteLocation.x, spriteLocation.y, 'blocks', nextShape.color);
 };
 
 function clearPreview() {
@@ -123,25 +124,27 @@ function clearPreview() {
   nextShape.blocks = null;
 };
 
-function activateShape() {
-  activeShape.shape = shapes[activeShape.type];
-  activeShape.centerX = activeShape.shape.orientation[activeShape.orientation].startingLocation.x;
-  activeShape.centerY = activeShape.shape.orientation[activeShape.orientation].startingLocation.y;
+function activateShape(currentShape) {
+  currentShape.shape = shapes[currentShape.type];
+  currentShape.centerX = currentShape.shape.orientation[currentShape.orientation].startingLocation.x;
+  currentShape.centerY = currentShape.shape.orientation[currentShape.orientation].startingLocation.y;
   
   var i, newX, newY;
 
-  for(i = 0; i < activeShape.blocks.length; i++) {
-    newX = activeShape.centerX + activeShape.shape.orientation[activeShape.orientation].blockPosition[i].x;
-    newY = activeShape.centerY + activeShape.shape.orientation[activeShape.orientation].blockPosition[i].y;
-    
-    makeBlock(activeShape.blocks[i], newX, newY, activeShape.color);
+  for(i = 0; i < currentShape.blocks.length; i++) {
+    newX = currentShape.centerX + currentShape.shape.orientation[currentShape.orientation].blockPosition[i].x;
+    newY = currentShape.centerY + currentShape.shape.orientation[currentShape.orientation].blockPosition[i].y;
+    if(currentShape.label =='activeShape')
+      makeBlock(currentShape.blocks[i], newX, newY, currentShape.color);
+    else
+      previewShape(currentShape.blocks[i],newX,newY);
   }
 };
 
 function makeBlock(block, newX, newY, newColor) {
 
-  x = newX;
-  y = newY;
+  block.x = newX;
+  block.y = newY;
   color = newColor;
   
   var spriteLocation = getSpriteLocation(block);    
@@ -158,8 +161,8 @@ function getSpriteLocation(block) {
 
 function getNextSpriteLocation(block) {
   var spriteX, spriteY;
-  spriteX = NEXT_BLOCK_LEFT + (block.x * BLOCK_SIZE);
-  spriteY = NEXT_BLOCK_TOP + block.y * BLOCK_SIZE;
+  spriteX = NEXT_BLOCK_LEFT- 40 + (block.x * BLOCK_SIZE);
+  spriteY = NEXT_BLOCK_TOP +20+ block.y * BLOCK_SIZE;
   
   return {"x": spriteX, "y": spriteY};
 };
@@ -219,10 +222,12 @@ function promoteShapes() {
   clearPreview();
   activeShape = nextShape;
   activateShape();
+  activeShape.label = 'activeShape';
 
   nextShape = Shape;
   randomizeShape(nextShape);
   previewShape();
+  nextShape.label = 'nextShape';
 };
 
 function clearActive() {
@@ -301,7 +306,7 @@ function moveShape(direction) {
         newY = activeShape.blocks[i].y;
         break;
     }  
-    moveBlock(activeShape.blocks[i],newX, newY);
+   moveBlock(activeShape.blocks[i],newX, newY);
   }
   
   // Update the Shape's center
@@ -322,14 +327,11 @@ function moveShape(direction) {
 };
 
 function canRotate() {
-  
-  
   var i, newX, newY, newOrientation;
-  newOrientation = (orientation + 1) % NUM_ORIENTATIONS;
-  
-  for(i = 0; i < blocks.length; i++) {
-    newX = centerX + shape.orientation[newOrientation].blockPosition[i].x;
-    newY = centerY + shape.orientation[newOrientation].blockPosition[i].y;      
+  newOrientation = (activeShape.shape.orientation + 1) % NUM_ORIENTATIONS;
+  for(i = 0; i < activeShape.blocks.length; i++) {
+    newX = activeShape.shape.centerX + activeShape.shape.orientation[newOrientation].blockPosition[i].x;
+    newY = activeShape.shape.centerY + activeShape.shape.orientation[newOrientation].blockPosition[i].y;      
     
     if (!isOnBoard(newX, newY) || isOccupied(newX, newY)) {
       return false;
@@ -345,21 +347,22 @@ function rotate() {
   }
   
   var i, newX, newY, newOrientation;
-  newOrientation = (orientation + 1) % NUM_ORIENTATIONS;
-  for(i = 0; i < blocks.length; i++) {
-    newX = centerX + shape.orientation[newOrientation].blockPosition[i].x;
-    newY = centerY + shape.orientation[newOrientation].blockPosition[i].y;      
-    moveBlock(blocks[i], newX, newY);
+  newOrientation = (activeShape.shape.orientation + 1) % NUM_ORIENTATIONS;
+  for(i = 0; i < activeShape.blocks.length; i++) {
+    newX = activeShape.shape.centerX + activeShape.shape.orientation[newOrientation].blockPosition[i].x;
+    newY = activeShape.shape.centerY + activeShape.shape.orientation[newOrientation].blockPosition[i].y;      
+    moveBlock(activeShape.blocks[i], newX, newY);
   }
-  orientation = newOrientation;
+  activeShape.shape.orientation = newOrientation;
 };
 
 function moveBlock(block, newX, newY) {
-    
-  block.x = newX;
-  block.y = newY;
+  // block.x = newX;
+  // block.y = newY;
+console.log(BLOCK_SIZE);
+  block.y =newY;
+
   var spriteLocation = getSpriteLocation(block,newX,newY);
-  block.sprite.x = spriteLocation.x;
-  block.sprite.y = spriteLocation.y;
+   block.sprite.position = spriteLocation;
 };
 

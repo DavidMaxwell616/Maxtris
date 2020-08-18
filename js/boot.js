@@ -33,6 +33,7 @@ var Shape = {
   centerX: null,
   centerY: null,
   shape: null,
+  label: null,
   blocks: [],
   tempCounter: 0
 };
