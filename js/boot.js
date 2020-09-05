@@ -65,12 +65,10 @@ var  NUM_BLOCKS_IN_SHAPE = 4,
     Z: 5,
     T: 6
   };
-
- 
   
     // Asset Sizes
-var BOARD_WIDTH = 10,
-    BOARD_HEIGHT = 16;
+  var BOARD_WIDTH = 10,
+    BOARD_HEIGHT = 20;
     
     // Movement Directions
 var DOWN = 0,

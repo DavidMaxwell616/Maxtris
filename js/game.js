@@ -180,38 +180,60 @@ function clearBlock(block) {
   block.sprite = null;
 };
 
+function getCompleteRows() {
+  var i, j, max;
+  var completeRows = [];
+  
+  for(i = 0; i < board.length; i++) {
+    if (isRowFull(i)) {
+      completeRows.push(i);
+    }      
+  }
+  return completeRows;
+};
+
+function isRowFull(row) {
+    
+  var i;
+  
+  for(i = 0; i < board[row].length; i++) {
+    if (board[row][i] === null) {
+      return false;
+    }
+  }
+  
+  return true;
+};
+
 function update(){
   if(turnCounter >= turnLength) {
      if(activeShape !== null && canMoveShape(DOWN)) {
        moveShape(DOWN);
       turnCounter = 0;
-  //   } else {
-  //     placeShapeInBoard();
-  //     completedRows = getCompleteRows();
-  //     if (completedRows.length > 0) {
-  //       clearRow(completedRows);
-  //       isUpdatingAfterRowClear = true;
-  //     } else {
-  //       promoteShapes();
-  //     }
-  //     completedRows = [];
-  //   }
-  //   
+    } else {
+      placeShapeInBoard();
+      completedRows = getCompleteRows();
+      if (completedRows.length > 0) {
+        clearRow(completedRows);
+        isUpdatingAfterRowClear = true;
+      } else {
+        promoteShapes();
+      }
+      completedRows = [];
+    }
+  } else if (isUpdatingAfterRowClear) {
     
-  // } else if (isUpdatingAfterRowClear) {
-    
-  //   if(turnCounter >= turnLength/10) {
-  //     isUpdatingAfterRowClear = false;
-  //     promoteShapes();
-  //   } else {
-  //     turnCounter++;
-  //   }
+    if(turnCounter >= turnLength/10) {
+      isUpdatingAfterRowClear = false;
+      promoteShapes();
+    } else {
+      turnCounter++;
+    }
+  } 
+  else 
+  {
+      turnCounter++;
   }
-} 
-else 
-{
-    turnCounter++;
-}
 }
  
 function promoteShapes() {
@@ -264,18 +286,19 @@ function canMoveShape(direction) {
   var i, newX, newY;
 
   for(i = 0; i < NUM_BLOCKS_IN_SHAPE; i++) {
+    var block = activeShape.blocks.find(block => block.id === i);
     switch(direction) {
       case DOWN:
-        newX = activeShape.blocks[i].x;
-        newY = activeShape.blocks[i].y + 1;
+        newX = block.x;
+        newY = block.y + 1;
         break;
       case LEFT:
-        newX = activeShape.blocks[i].x - 1;
-        newY = activeShape.blocks[i].y;
+        newX = block.x - 1;
+        newY = block.y;
         break;
       case RIGHT:
-        newX = activeShape.blocks[i].x + 1;
-        newY = activeShape.blocks[i].y;
+        newX = block.x + 1;
+        newY = block.y;
         break;
     }
     if (!isOnBoard(newX, newY) || isOccupied(newX, newY)) {
@@ -353,6 +376,5 @@ function moveBlock(block,moveX, moveY) {
   block.y += moveY;
   var spriteLocation = getSpriteLocation(block.x,block.y);
   block.sprite.position = spriteLocation;
- // console.log(i, block.x,block.y,spriteLocation.x,spriteLocation.y);
 };
 
