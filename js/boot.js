@@ -26,16 +26,16 @@ var newBlock;
 var nextBlock;
 
 
-var Shape = {
-  type: null,
-  orientation: null,
-  color: null,
-  centerX: null,
-  centerY: null,
-  shape: null,
-  label: null,
-  blocks: [],
-  tempCounter: 0
+function Shape(){
+  type= null;
+  orientation= null;
+  color= null;
+  centerX= null;
+  centerY= null;
+  shape= null;
+  label= null;
+  blocks= [];
+  tempCounter= 0;
 };
 
 var shapesJSON= null;
@@ -66,12 +66,7 @@ var  NUM_BLOCKS_IN_SHAPE = 4,
     T: 6
   };
 
-  var Block = {
-    color: null,
-    x: null,
-    y: null,
-    sprite: null
-  };
+ 
   
     // Asset Sizes
 var BOARD_WIDTH = 10,
