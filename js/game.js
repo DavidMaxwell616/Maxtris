@@ -1,4 +1,4 @@
-var game = new Phaser.Game(640, 480, Phaser.AUTO, 'phaser-example', 
+var game = new Phaser.Game(500, 420, Phaser.AUTO, 'phaser-example', 
 {preload: preload, create: create, update: update });
 
 function create() {
@@ -15,8 +15,8 @@ function create() {
  shapes = shapesJSON.shapes;
  
   game.add.text(
-  game.world.width * 0.61,
-  game.world.height * 0.1,
+    NEXT_BLOCK_LEFT-10,
+  game.world.height * 0.07,
   "MAXTRIS!", {
     fontFamily: 'Arial',
     fontSize: '32px',
@@ -24,8 +24,8 @@ function create() {
   },
 );
 game.add.text(
-  game.world.width * 0.65,
-  game.world.height * 0.43,
+  NEXT_BLOCK_LEFT+20,
+  game.world.height * 0.48,
   'Next Brick', {
     fontFamily: 'Arial',
     fontSize: '15px',
@@ -33,8 +33,8 @@ game.add.text(
   },
 );
 scoreText = game.add.text(
-  game.world.width * 0.65,
-  game.world.height * 0.5,
+  NEXT_BLOCK_LEFT+20,
+  game.world.height * 0.55,
   'SCORE:' + score, {
     fontFamily: 'Arial',
     fontSize: '15px',
@@ -42,8 +42,8 @@ scoreText = game.add.text(
   },
 );
 highScoreText = game.add.text(
-  game.world.width * 0.65,
-  game.world.height * 0.55,
+  NEXT_BLOCK_LEFT+5,
+  game.world.height * 0.6,
   'HIGH SCORE:' + highScore, {
     fontFamily: 'Arial',
     fontSize: '15px',
@@ -121,7 +121,7 @@ function clearPreview() {
   nextShape.type = null;
   nextShape.orientation = null;
   nextShape.color = null;
-
+  nextShape.shape = null;
   nextShape.centerX = null;
   nextShape.centerY = null;
 
@@ -235,20 +235,39 @@ function update(){
       turnCounter++;
   }
 }
- 
+
+function cloneShape(b)
+{
+var a = new Shape();
+a.type= b.type;
+  a.orientation= b.orientation;
+  a.color= b.color;
+  a.centerX= b.centerX;
+  a.centerY= b.centerY;
+  a.shape= b.shape;
+  a.blocks = [];
+  b.blocks.forEach(element => {
+  var Block = {
+      id: element.id,
+      x: element.x,
+      y: element.y,
+      sprite: element.sprite
+    };
+    a.blocks.push(Block);
+  }); 
+   return a;
+}
+
+
 function promoteShapes() {
 
-  activeShape = null;
-
-  clearPreview();
-  activeShape = nextShape;
-  activateShape();
+  activeShape = cloneShape(nextShape);
+  activateShape(activeShape);
   activeShape.label = 'activeShape';
-
-  nextShape = Shape;
+  
+  clearPreview();
   randomizeShape(nextShape);
-  previewShape();
-  nextShape.label = 'nextShape';
+  activateShape(nextShape);
 };
 
 function clearActive() {

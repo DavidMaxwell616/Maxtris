@@ -4,7 +4,7 @@ const FIELD_WIDTH = 15;
 const FIELD_HEIGHT = 20;
 const FLOOR = 400;
 const BLOCK_SIZE = 20;
-const NEXT_BLOCK_LEFT = 400;
+const NEXT_BLOCK_LEFT = 300;
 const NEXT_BLOCK_TOP = 100;
 var objectData;
 var currentBlocks;
@@ -35,7 +35,6 @@ function Shape(){
   shape= null;
   label= null;
   blocks= [];
-  tempCounter= 0;
 };
 
 var shapesJSON= null;
