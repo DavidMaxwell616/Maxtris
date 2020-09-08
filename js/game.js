@@ -16,40 +16,56 @@ function create() {
  
   game.add.text(
     NEXT_BLOCK_LEFT-10,
-  game.world.height * 0.07,
-  "MAXTRIS!", {
-    fontFamily: 'Arial',
-    fontSize: '32px',
-    fill: 0xFFFFF2D,
-  },
-);
+  game.world.height * 0.08,
+  "MAXTRIS!",   { 
+    font: "bold 32px Arial", 
+    fill: "#ffff2d", 
+    align: "center" 
+  });
+
 game.add.text(
-  NEXT_BLOCK_LEFT+20,
+  NEXT_BLOCK_LEFT+15,
   game.world.height * 0.48,
-  'Next Brick', {
-    fontFamily: 'Arial',
-    fontSize: '15px',
-    fill: 0xFFFFF2D,
-  },
-);
+  'NEXT BRICK', 
+  { 
+    font: "bold 15px Arial", 
+    fill: "#ffff2d", 
+    align: "center" 
+  });
+
 scoreText = game.add.text(
   NEXT_BLOCK_LEFT+20,
   game.world.height * 0.55,
-  'SCORE:' + score, {
-    fontFamily: 'Arial',
-    fontSize: '15px',
-    fill: 0xFFFFF2D,
-  },
-);
+  'SCORE: ' + score, 
+  { 
+    font: "bold 15px Arial", 
+    fill: "#ffff2d", 
+    align: "center" 
+  });
+
 highScoreText = game.add.text(
   NEXT_BLOCK_LEFT+5,
   game.world.height * 0.6,
-  'HIGH SCORE:' + highScore, {
-    fontFamily: 'Arial',
-    fontSize: '15px',
-    fill: 0xFFFFF2D,
-  },
-);
+  'HIGH SCORE: ' + highScore, 
+  { 
+    font: "bold 15px Arial", 
+    fill: "#ffff2d", 
+    align: "center" 
+  });
+
+gameOverText = game.add.text(
+  NEXT_BLOCK_LEFT+70,
+  game.world.height * 0.8,
+  "G A M E  O V E R\n Click Here to Restart", 
+  { 
+    font: "bold 23px Arial", 
+    fill: "#ff0044", 
+    align: "center" 
+  });
+gameOverText.anchor.set(0.5);
+gameOverText.inputEnabled = true;
+gameOverText.events.onInputDown.add(restartGame, this);
+gameOverText.visible = false;
 
 upKey = game.input.keyboard.addKey(Phaser.Keyboard.UP);
 upKey.onDown.add(function(event) {
@@ -62,7 +78,7 @@ rightKey.onDown.add(function(event) {
   if (canMoveShape(RIGHT)) moveShape(RIGHT);}, this);  
 downKey = game.input.keyboard.addKey(Phaser.Keyboard.DOWN);
 downKey.onDown.add(function(event) {
-  turnCounter += turnLength/5;}, this);  
+  if(canMoveShape(DOWN)) moveShape(DOWN);}, this);  
   
 // Create an empty board filled with nulls
 board = new Array(BOARD_HEIGHT);
@@ -163,6 +179,23 @@ function getSpriteLocation(x,y) {
   return {"x": spriteX, "y": spriteY};
 };
 
+function restartGame(){
+gameOverText.visible = false;
+ 
+  for(i = board.length; i = 0 ; i--) {
+    for(j = 0; j < i.length; j++) {
+      clearBlock(board[i][j]);
+    }
+  }
+};
+
+function updateScore(){
+  scoreText.setText('SCORE: ' + score);
+  if(score>highScore)
+  highScore = score;
+  highScoreText.setText('HIGH SCORE: ' + highScore);
+}
+
 function getNextSpriteLocation(block) {
   var spriteX, spriteY;
   spriteX = NEXT_BLOCK_LEFT- 40 + (block.x * BLOCK_SIZE);
@@ -206,8 +239,16 @@ function isRowFull(row) {
 };
 
 function update(){
+  if (GameOver)
+  return;
   if(turnCounter >= turnLength) {
-     if(activeShape !== null && canMoveShape(DOWN)) {
+    if(!canMoveShape(DOWN) && activeShape.centerY==0){
+      GameOver = true;
+      gameOverText.visible = true;
+      return; 
+    }
+    if(activeShape !== null && canMoveShape(DOWN)) {
+      updateScore();
        moveShape(DOWN);
       turnCounter = 0;
     } else {
@@ -252,7 +293,7 @@ a.type= b.type;
       x: element.x,
       y: element.y,
       sprite: element.sprite
-    };
+  };
     a.blocks.push(Block);
   }); 
    return a;
@@ -262,9 +303,9 @@ a.type= b.type;
 function promoteShapes() {
 
   activeShape = cloneShape(nextShape);
-  activateShape(activeShape);
   activeShape.label = 'activeShape';
-  
+  activateShape(activeShape);
+   
   clearPreview();
   randomizeShape(nextShape);
   activateShape(nextShape);
@@ -344,7 +385,7 @@ function moveShape(direction) {
   }
    for(var i = 0; i < NUM_BLOCKS_IN_SHAPE; i++) {
     var block = activeShape.blocks.find(block => block.id === i);
-     moveBlock(block, moveX, moveY);
+     moveBlock(block, block.x+moveX, block.y+moveY);
    }
   // Update the Shape's center
   switch(direction) {
@@ -362,11 +403,10 @@ function moveShape(direction) {
 
 function canRotate() {
   var i, newX, newY, newOrientation;
-  newOrientation = (activeShape.shape.orientation + 1) % NUM_ORIENTATIONS;
+  newOrientation = (activeShape.orientation + 1) % NUM_ORIENTATIONS;
   for(i = 0; i < NUM_BLOCKS_IN_SHAPE; i++) {
-    newX = activeShape.shape.centerX + activeShape.shape.orientation[newOrientation].blockPosition[i].x;
-    newY = activeShape.shape.centerY + activeShape.shape.orientation[newOrientation].blockPosition[i].y;      
-    
+    newX = activeShape.centerX + activeShape.shape.orientation[newOrientation].blockPosition[i].x;
+    newY = activeShape.centerY + activeShape.shape.orientation[newOrientation].blockPosition[i].y;      
     if (!isOnBoard(newX, newY) || isOccupied(newX, newY)) {
       return false;
     }
@@ -375,25 +415,59 @@ function canRotate() {
 };
   
 function rotate() {
-  
-  if(!canRotate()) {
-    throw "Cannot rotate active shape";
-  }
-  
   var i, newX, newY, newOrientation;
-  newOrientation = (activeShape.shape.orientation + 1) % NUM_ORIENTATIONS;
+  newOrientation = (activeShape.orientation + 1) % NUM_ORIENTATIONS;
   for(i = 0; i < NUM_BLOCKS_IN_SHAPE; i++) {
-    newX = activeShape.shape.centerX + activeShape.shape.orientation[newOrientation].blockPosition[i].x;
-    newY = activeShape.shape.centerY + activeShape.shape.orientation[newOrientation].blockPosition[i].y;     
+    newX = activeShape.centerX + activeShape.shape.orientation[newOrientation].blockPosition[i].x;
+    newY = activeShape.centerY + activeShape.shape.orientation[newOrientation].blockPosition[i].y;     
     moveBlock(activeShape.blocks[i], newX, newY);
   }
-  activeShape.shape.orientation = newOrientation;
+  activeShape.orientation = newOrientation;
 };
 
-function moveBlock(block,moveX, moveY) {
-  block.x += moveX;
-  block.y += moveY;
+function moveBlock(block,newX, newY) {
+  block.x = newX;
+  block.y = newY;
   var spriteLocation = getSpriteLocation(block.x,block.y);
   block.sprite.position = spriteLocation;
 };
 
+function clearRow(completedRows) {
+    
+  var i, j, h, row, block, alreadyShifted, actualRowToClear;
+  alreadyShifted = 0;
+  
+  for(i = completedRows.length-1; i >= 0 ; i--) {
+    
+    actualRowToClear = completedRows[i] + alreadyShifted;
+      
+    row = board[actualRowToClear];
+    
+    for(j = 0; j < row.length; j++) {
+      clearBlock(board[actualRowToClear][j]);
+      board[actualRowToClear][j] = null;
+    }
+    dropRowsAbove(actualRowToClear-1);
+    alreadyShifted++;
+    turnLength--;
+    score+=50;
+  }
+};
+
+function dropRowsAbove(row) {
+  
+  var i, j, block;
+  
+  for(i = row; i >= 0; i--) {
+    for(j = 0; j < board[i].length; j++) {
+      
+      block = board[i][j];
+      if(block !== null) {
+        moveBlock(block,block.x, block.y+1);
+        board[i+1][j] = board[i][j];
+        board[i][j] = null;
+      }
+      
+    }
+  }
+};

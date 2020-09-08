@@ -24,7 +24,9 @@ var nextBlockNum;
 var highScore = 0;
 var newBlock;
 var nextBlock;
-
+var scoreText;
+var highScoreText;
+var gameOverText;
 
 function Shape(){
   type= null;
@@ -47,11 +49,11 @@ var isUpdatingAfterRowClear = false;
 
 var nextShape = null;
 var activeShape = null;
-
+var GameOver = false;
 var completedRows = [];
 
 var  NUM_BLOCKS_IN_SHAPE = 4,
-  NUM_SHAPE_TYPES = 7,
+  NUM_SHAPE_TYPES = 8,
   NUM_ORIENTATIONS = 4;
 
   var ShapeType =
