@@ -14,7 +14,16 @@ function create() {
  shapesJSON = this.cache.getJSON('shapes');
  shapes = shapesJSON.shapes;
  
-  game.add.text(
+ game.add.text(
+  NEXT_BLOCK_LEFT-8,
+game.world.height * 0.09,
+"MAXTRIS!",   { 
+  font: "bold 32px Arial", 
+  fill: "#7F6A00", 
+  align: "center" 
+});
+
+game.add.text(
     NEXT_BLOCK_LEFT-10,
   game.world.height * 0.08,
   "MAXTRIS!",   { 
@@ -23,7 +32,16 @@ function create() {
     align: "center" 
   });
 
-game.add.text(
+  game.add.text(
+    NEXT_BLOCK_LEFT+17,
+  game.world.height * 0.485,
+  'NEXT BRICK', 
+  {  font: "bold 15px Arial", 
+    fill: "#7F6A00", 
+    align: "center" 
+  });
+  
+  game.add.text(
   NEXT_BLOCK_LEFT+15,
   game.world.height * 0.48,
   'NEXT BRICK', 
@@ -103,7 +121,7 @@ for(i = 0; i < BOARD_HEIGHT; i++) {
 
 function randomizeShape(shape) {
     
-  shape.type = Math.floor(Math.random() * NUM_SHAPE_TYPES);
+  shape.type = game.rnd.integerInRange(0, 6);
   
   initBlocks(shape);
 };
@@ -116,19 +134,21 @@ shape.blocks = [];
       id: i,
       x: null,
       y: null,
-      sprite: null
+      sprite: null,
+      color: shape.type,
     };
     shape.blocks.push(Block);
   }
 }
 
-function previewShape(i, newX, newY) {
+function previewShape(i, newX, newY, newColor) {
   var block = nextShape.blocks.find(block => block.id === i);
   block.x = newX;
   block.y = newY;
+  block.color = newColor;
     var spriteLocation = getNextSpriteLocation(block);
-    block.sprite = game.add.sprite(spriteLocation.x, spriteLocation.y, 'blocks', nextShape.color);
-};
+    block.sprite = game.add.sprite(spriteLocation.x, spriteLocation.y, 'blocks', newColor);
+  };
 
 function clearPreview() {
   for(i = 0; i < NUM_BLOCKS_IN_SHAPE; i++) {
@@ -146,7 +166,7 @@ function clearPreview() {
 
 function activateShape(currentShape) {
   currentShape.shape = shapes[currentShape.type];
-  currentShape.color = currentShape.type;
+  currentShape.color = BLOCK_COLORS[currentShape.shape.name];
   currentShape.orientation = 0;
   currentShape.centerX = currentShape.shape.orientation[currentShape.orientation].startingLocation.x;
   currentShape.centerY = currentShape.shape.orientation[currentShape.orientation].startingLocation.y;
@@ -155,10 +175,11 @@ function activateShape(currentShape) {
     var newX, newY;
     newX = currentShape.centerX + currentShape.shape.orientation[currentShape.orientation].blockPosition[i].x;
     newY = currentShape.centerY + currentShape.shape.orientation[currentShape.orientation].blockPosition[i].y;
-    if(currentShape.label =='activeShape')
+    if(currentShape.label =='activeShape'){
       makeBlock(i, newX, newY, currentShape.color);
-    else
-      previewShape(i,newX,newY);
+    }
+      else
+      previewShape(i,newX,newY, currentShape.color);
     }
  };
 
@@ -169,8 +190,9 @@ var block = activeShape.blocks.find(block => block.id === i);
   block.color = newColor;
   
   var spriteLocation = getSpriteLocation(block.x,block.y);   
-   block.sprite = game.add.sprite(spriteLocation.x, spriteLocation.y, 'blocks', block.color);
-};
+   block.sprite = game.add.sprite(spriteLocation.x, spriteLocation.y, 'blocks',newColor);
+  console.log(newColor);
+  };
 
 function getSpriteLocation(x,y) {
   var spriteX, spriteY;
@@ -180,12 +202,14 @@ function getSpriteLocation(x,y) {
 };
 
 function restartGame(){
-gameOverText.visible = false;
- 
-  for(i = board.length; i = 0 ; i--) {
-    for(j = 0; j < i.length; j++) {
-      clearBlock(board[i][j]);
-    }
+  gameOverText.visible = false;
+  for (i=0;i<board.length;i++)
+  { 
+    var row = board[i];
+      for(j = 0; j < row.length; j++) {
+        clearBlock(board[i][j]);
+        board[i][j] = null;
+      }
   }
 };
 
@@ -292,6 +316,7 @@ a.type= b.type;
       id: element.id,
       x: element.x,
       y: element.y,
+      color: element.color,
       sprite: element.sprite
   };
     a.blocks.push(Block);

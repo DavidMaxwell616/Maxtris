@@ -75,12 +75,15 @@ var  NUM_BLOCKS_IN_SHAPE = 4,
 var DOWN = 0,
     LEFT = 1,
     RIGHT = 2;
-      
-    // Block colors
-var  NUM_COLORS = 4,
-    GREEN = 0,
-    RED = 1,
-    BLUE = 2,
-    YELLOW = 3;
+
+const BLOCK_COLORS = {
+    "I": 0, //"light blue",
+    "J": 1,//"dark blue",
+    "L": 2,//"orange",
+    "O" : 3,//"yellow",
+    "S" : 4,//"Green",
+    "T" : 5,//"Purple",
+    "Z" : 6//"Red",
+  }
 
 
