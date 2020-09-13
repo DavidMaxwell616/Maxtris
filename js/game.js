@@ -96,7 +96,7 @@ rightKey.onDown.add(function(event) {
   if (canMoveShape(RIGHT)) moveShape(RIGHT);}, this);  
 downKey = game.input.keyboard.addKey(Phaser.Keyboard.DOWN);
 downKey.onDown.add(function(event) {
-  if(canMoveShape(DOWN)) moveShape(DOWN);}, this);  
+  if(canMoveShape(DOWN) && !GameOver) moveShape(DOWN);}, this);  
   
 // Create an empty board filled with nulls
 board = new Array(BOARD_HEIGHT);
@@ -191,7 +191,6 @@ var block = activeShape.blocks.find(block => block.id === i);
   
   var spriteLocation = getSpriteLocation(block.x,block.y);   
    block.sprite = game.add.sprite(spriteLocation.x, spriteLocation.y, 'blocks',newColor);
-  console.log(newColor);
   };
 
 function getSpriteLocation(x,y) {
@@ -211,6 +210,27 @@ function restartGame(){
         board[i][j] = null;
       }
   }
+  GameOver = false;
+  score = 0;
+  turnCounter=0;
+  turnLength = 60;
+  // Create Shapes
+  activeShape.blocks.forEach(element => {
+    clearBlock(element);
+  });
+  nextShape.blocks.forEach(element => {
+    clearBlock(element);
+  });
+  nextShape = null;
+  nextShape = new Shape();
+  randomizeShape(nextShape);
+  nextShape.label = 'nextShape';
+  activateShape(nextShape);
+  
+  activeShape = new Shape();
+  randomizeShape(activeShape);
+  activeShape.label = 'activeShape';
+  activateShape(activeShape);
 };
 
 function updateScore(){
@@ -229,12 +249,14 @@ function getNextSpriteLocation(block) {
 };
 
 function clearBlock(block) {
-  block.id = null; 
-  block.x = null;
-  block.y = null;
-  block.color = null;
-  block.sprite.destroy();
-  block.sprite = null;
+  if(block!=null){
+    block.id = null; 
+    block.x = null;
+    block.y = null;
+    block.color = null;
+    block.sprite.destroy();
+    block.sprite = null;
+  }
 };
 
 function getCompleteRows() {
@@ -345,14 +367,15 @@ function clearActive() {
   activeShape.centerX = null;
   activeShape.centerY = null;
 
-  activeShape.blocks = null;
+  activeShape.blocks = [];
 };
 
 function placeShapeInBoard() {
-  
   var i, block;
   for(i = 0; i < NUM_BLOCKS_IN_SHAPE; i++) {
     block = activeShape.blocks[i];
+    console.log(activeShape.blocks[i],i);
+    if(activeShape.blocks[i]!=null)
     board[block.y][block.x] = activeShape.blocks[i];
   }
 };
