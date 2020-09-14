@@ -210,7 +210,6 @@ function restartGame(){
         board[i][j] = null;
       }
   }
-  GameOver = false;
   score = 0;
   turnCounter=0;
   turnLength = 60;
@@ -221,7 +220,7 @@ function restartGame(){
   nextShape.blocks.forEach(element => {
     clearBlock(element);
   });
-  nextShape = null;
+
   nextShape = new Shape();
   randomizeShape(nextShape);
   nextShape.label = 'nextShape';
@@ -231,6 +230,7 @@ function restartGame(){
   randomizeShape(activeShape);
   activeShape.label = 'activeShape';
   activateShape(activeShape);
+GameOver = false;
 };
 
 function updateScore(){
@@ -284,30 +284,37 @@ function isRowFull(row) {
   return true;
 };
 
-function update(){
+function update() {
   if (GameOver)
-  return;
-  if(turnCounter >= turnLength) {
-    if(!canMoveShape(DOWN) && activeShape.centerY==0){
-      GameOver = true;
-      gameOverText.visible = true;
-      return; 
-    }
-    if(activeShape !== null && canMoveShape(DOWN)) {
+  return;   
+    if(turnCounter >= turnLength) {
+      if(!canMoveShape(DOWN) && activeShape.centerY==0){
+        GameOver = true;
+        gameOverText.visible = true;
+        return; 
+      }
+  if(activeShape !== null && canMoveShape(DOWN)) {
       updateScore();
-       moveShape(DOWN);
-      turnCounter = 0;
-    } else {
-      placeShapeInBoard();
-      completedRows = getCompleteRows();
-      if (completedRows.length > 0) {
+      moveShape(DOWN);
+  } 
+  else 
+  {
+    placeShapeInBoard();
+    completedRows = getCompleteRows();
+
+    if (completedRows.length > 0) {
+        
         clearRow(completedRows);
         isUpdatingAfterRowClear = true;
+        
       } else {
         promoteShapes();
       }
+      
       completedRows = [];
     }
+    turnCounter = 0;
+    
   } else if (isUpdatingAfterRowClear) {
     
     if(turnCounter >= turnLength/10) {
@@ -316,12 +323,10 @@ function update(){
     } else {
       turnCounter++;
     }
-  } 
-  else 
-  {
+  } else {
       turnCounter++;
   }
-}
+};
 
 function cloneShape(b)
 {
@@ -371,12 +376,10 @@ function clearActive() {
 };
 
 function placeShapeInBoard() {
-  var i, block;
-  for(i = 0; i < NUM_BLOCKS_IN_SHAPE; i++) {
-    block = activeShape.blocks[i];
-    console.log(activeShape.blocks[i],i);
+  for(var i = 0; i < NUM_BLOCKS_IN_SHAPE; i++) {
+    var block = activeShape.blocks[i];
     if(activeShape.blocks[i]!=null)
-    board[block.y][block.x] = activeShape.blocks[i];
+     board[block.y][block.x] = activeShape.blocks[i];
   }
 };
 
