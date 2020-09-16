@@ -488,22 +488,22 @@ function clearRow(completedRows) {
   var i, j, h, row, block, alreadyShifted, actualRowToClear;
   var incrementScore = 0;
   alreadyShifted = 0;
+  var newScore = 50;   
   for(i = completedRows.length-1; i >= 0 ; i--) {
     
     actualRowToClear = completedRows[i] + alreadyShifted;
       
     row = board[actualRowToClear];
-    var newScore = 50;   
     for(j = 0; j < row.length; j++) {
       clearBlock(board[actualRowToClear][j]);
       board[actualRowToClear][j] = null;
-      newScore*=2;
     }
-    score +=newScore
+    newScore*=2;
     dropRowsAbove(actualRowToClear-1);
     alreadyShifted++;
     turnLength--;
   }
+  score +=newScore
 };
 
 function dropRowsAbove(row) {
