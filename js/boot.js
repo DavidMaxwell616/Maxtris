@@ -46,6 +46,7 @@ var turnLength = 60;
 var turnCounter = 0;
 
 var isUpdatingAfterRowClear = false;
+var startGame = false;
 
 var nextShape = null;
 var activeShape = null;

@@ -1,7 +1,22 @@
 var game = new Phaser.Game(500, 420, Phaser.AUTO, 'phaser-example', 
 {preload: preload, create: create, update: update });
 
+
 function create() {
+  if (!startGame) mainMenuCreate();
+  else gameCreate();
+}
+
+var width = this.width;
+var height = this.height;
+
+
+function create() {
+  if (!startGame) mainMenuCreate(this);
+  else gameCreate();
+}
+
+function gameCreate() {
  graphics = game.add.graphics(0,0);
  
  graphics.beginFill(0xB4B4B4, 1.0);
@@ -11,7 +26,7 @@ function create() {
  graphics.beginFill(0x000000, 1.0);
  graphics.drawRect(NEXT_BLOCK_LEFT, NEXT_BLOCK_TOP, 120, 100);
 
- shapesJSON = this.cache.getJSON('shapes');
+ shapesJSON = game.cache.getJSON('shapes');
  shapes = shapesJSON.shapes;
  
  game.add.text(
@@ -285,9 +300,9 @@ function isRowFull(row) {
 };
 
 function update() {
-  if (GameOver)
-  return;   
-    if(turnCounter >= turnLength) {
+  if (!startGame || GameOver)
+    return;
+  if(turnCounter >= turnLength) {
       if(!canMoveShape(DOWN) && activeShape.centerY==0){
         GameOver = true;
         gameOverText.visible = true;
