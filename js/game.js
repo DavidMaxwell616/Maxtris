@@ -103,6 +103,8 @@ gameOverText.visible = false;
 highScore = localStorage.getItem(localStorageName) == null ? 0 :
             localStorage.getItem(localStorageName);
 
+arrows(game);
+
 upKey = game.input.keyboard.addKey(Phaser.Keyboard.UP);
 upKey.onDown.add(function(event) {
   if (canRotate()) rotate(); }, this);  
@@ -167,6 +169,47 @@ function previewShape(i, newX, newY, newColor) {
     var spriteLocation = getNextSpriteLocation(block);
     block.sprite = game.add.sprite(spriteLocation.x, spriteLocation.y, 'blocks', newColor);
   };
+
+  function arrows(game) {
+    var midX = game.width*.75;
+    var midY = game.height*.75;
+    arrowRight = game.add.button(midX+40, midY+40, 'arrow');
+    arrowRight.anchor.setTo(1, 1);
+    arrowRight.scale.setTo(.5, .5);
+    arrowRight.fixedToCamera = true;
+    arrowRight.events.onInputDown.add(function () {
+      if (canMoveShape(RIGHT)) moveShape(RIGHT);
+    });
+
+    arrowLeft = game.add.button(midX-80, midY+2, 'arrow');
+    arrowLeft.fixedToCamera = true;
+    arrowLeft.anchor.setTo(1, 1);
+    arrowLeft.scale.setTo(.5, .5);
+    arrowLeft.angle = 180;
+    arrowLeft.events.onInputDown.add(function () {
+      if (canMoveShape(LEFT)) moveShape(LEFT);
+    });
+  
+    arrowUp = game.add.button(midX, midY-40, 'arrow');
+    arrowUp.fixedToCamera = true;
+    arrowUp.anchor.setTo(1, 1);
+    arrowUp.scale.setTo(.5, .5);
+    arrowUp.angle = 270;
+    arrowUp.events.onInputDown.add(function () {
+      if (canRotate()) rotate();
+    });
+    
+  
+    arrowDown = game.add.button(midX-42, midY+80, 'arrow');
+    arrowDown.fixedToCamera = true;
+    arrowDown.anchor.setTo(1, 1);
+    arrowDown.scale.setTo(.5, .5);
+    arrowDown.angle = 90;
+    arrowDown.events.onInputDown.add(function () {
+      if(canMoveShape(DOWN) && !GameOver) moveShape(DOWN)
+    });
+
+  }
 
 function clearPreview() {
   for(i = 0; i < NUM_BLOCKS_IN_SHAPE; i++) {

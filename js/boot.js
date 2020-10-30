@@ -87,4 +87,9 @@ const BLOCK_COLORS = {
     "Z" : 6//"Red",
   }
 
-
+  var arrowRight;
+  var arrowLeft;
+  var arrowUp;
+  var arrowDown;
+  var right = left = up = down = false; //arrow images on screen
+  
