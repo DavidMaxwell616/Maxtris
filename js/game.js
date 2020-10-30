@@ -100,6 +100,9 @@ gameOverText.inputEnabled = true;
 gameOverText.events.onInputDown.add(restartGame, this);
 gameOverText.visible = false;
 
+highScore = localStorage.getItem(localStorageName) == null ? 0 :
+            localStorage.getItem(localStorageName);
+
 upKey = game.input.keyboard.addKey(Phaser.Keyboard.UP);
 upKey.onDown.add(function(event) {
   if (canRotate()) rotate(); }, this);  
@@ -305,6 +308,7 @@ function update() {
   if(turnCounter >= turnLength) {
       if(!canMoveShape(DOWN) && activeShape.centerY==0){
         GameOver = true;
+        localStorage.setItem(localStorageName, highScore);
         gameOverText.visible = true;
         return; 
       }

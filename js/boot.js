@@ -41,7 +41,7 @@ function Shape(){
 
 var shapesJSON= null;
 var board = null;
-
+var localStorageName = "maxtris";
 var turnLength = 60;
 var turnCounter = 0;
 
