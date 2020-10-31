@@ -6,7 +6,7 @@ function preload() {
     fill: '#ffffff',
   });
   this.load.path = '../assets/images/';
-  this.load.image('splash', 'splash.bmp');
+  this.load.image('splash', 'splash.png');
   this.load.image('maxxdaddy', 'maxxdaddy.gif');
   this.load.spritesheet('blocks', 'blocks.png', 20,20,7);
   this.load.image('arrow', 'arrow.png');

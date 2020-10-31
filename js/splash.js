@@ -3,18 +3,26 @@ function mainMenuCreate(scene) {
   splash.anchor.setTo(0, 0);
   splash.width = game.width;
   splash.height = game.height;
+  splash.smoothed = true;
+  splash.inputEnabled = true;
   maxxdaddy = game.add.image(game.width*.35, game.height * 0.8, 'maxxdaddy');
   maxxdaddy.width = game.width*.25;
   maxxdaddy.height = game.height*.1;
+  splash.events.onInputDown.add(start, this);
 
   game.input.keyboard.onUpCallback = function (e) {
     if (e.keyCode == Phaser.Keyboard.SPACEBAR) {
-      if (startGame)
-        return;
-      splash.visible = false;
-      maxxdaddy.visible = false;
-      startGame = true;
-      gameCreate(scene);
+      start();
     }
+  }
+
+  function start(){
+    if (startGame)
+    return;
+  splash.visible = false;
+  maxxdaddy.visible = false;
+  startGame = true;
+  gameCreate(scene);
+
   }
 }

@@ -1,11 +1,6 @@
-const RIGHT_WALL = 250;
-const LEFT_WALL = 50;
 const FIELD_WIDTH = 15;
 const FIELD_HEIGHT = 20;
-const FLOOR = 400;
 const BLOCK_SIZE = 20;
-const NEXT_BLOCK_LEFT = 300;
-const NEXT_BLOCK_TOP = 100;
 var objectData;
 var currentBlocks;
 var nextBlocks;
@@ -30,7 +25,6 @@ var gameOverText;
 
 function Shape(){
   type= null;
-  orientation= null;
   color= null;
   centerX= null;
   centerY= null;
@@ -91,5 +85,4 @@ const BLOCK_COLORS = {
   var arrowLeft;
   var arrowUp;
   var arrowDown;
-  var right = left = up = down = false; //arrow images on screen
-  
+ 

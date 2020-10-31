@@ -1,37 +1,38 @@
-var game = new Phaser.Game(500, 420, Phaser.AUTO, 'phaser-example', 
+var game = new Phaser.Game(window.innerWidth * window.devicePixelRatio, window.innerHeight * window.devicePixelRatio,
+   Phaser.AUTO, 'phaser-example', 
 {preload: preload, create: create, update: update });
 
 
-function create() {
-  if (!startGame) mainMenuCreate();
-  else gameCreate();
-}
-
-var width = this.width;
-var height = this.height;
+var width = game.width;
+var height = game.height;
 
 
 function create() {
+  startGame = true;
   if (!startGame) mainMenuCreate(this);
   else gameCreate();
 }
+const RIGHT_WALL = 250;
+const LEFT_WALL = 50;
+const FLOOR = height-20;
+const NEXT_BLOCK_LEFT = RIGHT_WALL+100;
+const NEXT_BLOCK_TOP = height*.25;
 
 function gameCreate() {
  graphics = game.add.graphics(0,0);
- 
+
  graphics.beginFill(0xB4B4B4, 1.0);
- graphics.drawRect(0, 0, LEFT_WALL, game.world.height);
- graphics.drawRect(RIGHT_WALL, 0, game.world.width - RIGHT_WALL, game.world.height);
- graphics.drawRect(LEFT_WALL, FLOOR, 200, 80);
- graphics.beginFill(0x000000, 1.0);
- graphics.drawRect(NEXT_BLOCK_LEFT, NEXT_BLOCK_TOP, 120, 100);
+ graphics.drawRect(0, 0, width, game.height);
+  graphics.beginFill(0x000000, 1.0);
+  graphics.drawRect(LEFT_WALL,0, RIGHT_WALL-LEFT_WALL, FLOOR);
+  graphics.drawRect(NEXT_BLOCK_LEFT, NEXT_BLOCK_TOP, 120, 100);
 
  shapesJSON = game.cache.getJSON('shapes');
  shapes = shapesJSON.shapes;
  
  game.add.text(
   NEXT_BLOCK_LEFT-8,
-game.world.height * 0.09,
+height * 0.09,
 "MAXTRIS!",   { 
   font: "bold 32px Arial", 
   fill: "#7F6A00", 
@@ -40,7 +41,7 @@ game.world.height * 0.09,
 
 game.add.text(
     NEXT_BLOCK_LEFT-10,
-  game.world.height * 0.08,
+  height * 0.08,
   "MAXTRIS!",   { 
     font: "bold 32px Arial", 
     fill: "#ffff2d", 
@@ -49,7 +50,7 @@ game.add.text(
 
   game.add.text(
     NEXT_BLOCK_LEFT+17,
-  game.world.height * 0.485,
+  height * 0.485,
   'NEXT BRICK', 
   {  font: "bold 15px Arial", 
     fill: "#7F6A00", 
@@ -58,7 +59,7 @@ game.add.text(
   
   game.add.text(
   NEXT_BLOCK_LEFT+15,
-  game.world.height * 0.48,
+  height * 0.48,
   'NEXT BRICK', 
   { 
     font: "bold 15px Arial", 
@@ -68,7 +69,7 @@ game.add.text(
 
 scoreText = game.add.text(
   NEXT_BLOCK_LEFT+20,
-  game.world.height * 0.55,
+  height * 0.55,
   'SCORE: ' + score, 
   { 
     font: "bold 15px Arial", 
@@ -78,7 +79,7 @@ scoreText = game.add.text(
 
 highScoreText = game.add.text(
   NEXT_BLOCK_LEFT+5,
-  game.world.height * 0.6,
+  height * 0.6,
   'HIGH SCORE: ' + highScore, 
   { 
     font: "bold 15px Arial", 
@@ -88,7 +89,7 @@ highScoreText = game.add.text(
 
 gameOverText = game.add.text(
   NEXT_BLOCK_LEFT+70,
-  game.world.height * 0.8,
+  height * 0.8,
   "G A M E  O V E R\n Click Here to Restart", 
   { 
     font: "bold 23px Arial", 
@@ -103,7 +104,7 @@ gameOverText.visible = false;
 highScore = localStorage.getItem(localStorageName) == null ? 0 :
             localStorage.getItem(localStorageName);
 
-arrows(game);
+setUpArrows(game);
 
 upKey = game.input.keyboard.addKey(Phaser.Keyboard.UP);
 upKey.onDown.add(function(event) {
@@ -170,9 +171,9 @@ function previewShape(i, newX, newY, newColor) {
     block.sprite = game.add.sprite(spriteLocation.x, spriteLocation.y, 'blocks', newColor);
   };
 
-  function arrows(game) {
-    var midX = game.width*.75;
-    var midY = game.height*.75;
+  function setUpArrows(game) {
+    var midX = NEXT_BLOCK_LEFT+80;
+    var midY = height*.75;
     arrowRight = game.add.button(midX+40, midY+40, 'arrow');
     arrowRight.anchor.setTo(1, 1);
     arrowRight.scale.setTo(.5, .5);
