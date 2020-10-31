@@ -1,4 +1,4 @@
-var game = new Phaser.Game(window.innerWidth * window.devicePixelRatio, window.innerHeight * window.devicePixelRatio,
+var game = new Phaser.Game(window.innerWidth, window.innerHeight * window.devicePixelRatio,
    Phaser.AUTO, 'phaser-example', 
 {preload: preload, create: create, update: update });
 
@@ -8,7 +8,6 @@ var height = game.height;
 
 
 function create() {
-  startGame = true;
   if (!startGame) mainMenuCreate(this);
   else gameCreate();
 }
@@ -140,6 +139,47 @@ for(i = 0; i < BOARD_HEIGHT; i++) {
  activateShape(activeShape);
 };
 
+function setUpArrows(game) {
+  var midX = NEXT_BLOCK_LEFT+80;
+  var midY = height*.75;
+  arrowRight = game.add.button(midX+40, midY+40, 'arrow');
+  arrowRight.anchor.setTo(1, 1);
+  arrowRight.scale.setTo(.5, .5);
+  arrowRight.fixedToCamera = true;
+  arrowRight.events.onInputDown.add(function () {
+    if (canMoveShape(RIGHT)) moveShape(RIGHT);
+  });
+
+  arrowLeft = game.add.button(midX-80, midY+2, 'arrow');
+  arrowLeft.fixedToCamera = true;
+  arrowLeft.anchor.setTo(1, 1);
+  arrowLeft.scale.setTo(.5, .5);
+  arrowLeft.angle = 180;
+  arrowLeft.events.onInputDown.add(function () {
+    if (canMoveShape(LEFT)) moveShape(LEFT);
+  });
+
+  arrowUp = game.add.button(midX, midY-40, 'arrow');
+  arrowUp.fixedToCamera = true;
+  arrowUp.anchor.setTo(1, 1);
+  arrowUp.scale.setTo(.5, .5);
+  arrowUp.angle = 270;
+  arrowUp.events.onInputDown.add(function () {
+    if (canRotate()) rotate();
+  });
+  
+
+  arrowDown = game.add.button(midX-42, midY+80, 'arrow');
+  arrowDown.fixedToCamera = true;
+  arrowDown.anchor.setTo(1, 1);
+  arrowDown.scale.setTo(.5, .5);
+  arrowDown.angle = 90;
+  arrowDown.events.onInputDown.add(function () {
+    if(canMoveShape(DOWN) && !GameOver) moveShape(DOWN)
+  });
+
+}
+
 function randomizeShape(shape) {
     
   shape.type = game.rnd.integerInRange(0, 6);
@@ -171,46 +211,7 @@ function previewShape(i, newX, newY, newColor) {
     block.sprite = game.add.sprite(spriteLocation.x, spriteLocation.y, 'blocks', newColor);
   };
 
-  function setUpArrows(game) {
-    var midX = NEXT_BLOCK_LEFT+80;
-    var midY = height*.75;
-    arrowRight = game.add.button(midX+40, midY+40, 'arrow');
-    arrowRight.anchor.setTo(1, 1);
-    arrowRight.scale.setTo(.5, .5);
-    arrowRight.fixedToCamera = true;
-    arrowRight.events.onInputDown.add(function () {
-      if (canMoveShape(RIGHT)) moveShape(RIGHT);
-    });
-
-    arrowLeft = game.add.button(midX-80, midY+2, 'arrow');
-    arrowLeft.fixedToCamera = true;
-    arrowLeft.anchor.setTo(1, 1);
-    arrowLeft.scale.setTo(.5, .5);
-    arrowLeft.angle = 180;
-    arrowLeft.events.onInputDown.add(function () {
-      if (canMoveShape(LEFT)) moveShape(LEFT);
-    });
   
-    arrowUp = game.add.button(midX, midY-40, 'arrow');
-    arrowUp.fixedToCamera = true;
-    arrowUp.anchor.setTo(1, 1);
-    arrowUp.scale.setTo(.5, .5);
-    arrowUp.angle = 270;
-    arrowUp.events.onInputDown.add(function () {
-      if (canRotate()) rotate();
-    });
-    
-  
-    arrowDown = game.add.button(midX-42, midY+80, 'arrow');
-    arrowDown.fixedToCamera = true;
-    arrowDown.anchor.setTo(1, 1);
-    arrowDown.scale.setTo(.5, .5);
-    arrowDown.angle = 90;
-    arrowDown.events.onInputDown.add(function () {
-      if(canMoveShape(DOWN) && !GameOver) moveShape(DOWN)
-    });
-
-  }
 
 function clearPreview() {
   for(i = 0; i < NUM_BLOCKS_IN_SHAPE; i++) {
