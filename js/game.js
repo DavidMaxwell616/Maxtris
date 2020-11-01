@@ -13,7 +13,7 @@ function create() {
 }
 const RIGHT_WALL = 250;
 const LEFT_WALL = 50;
-const FLOOR = height-20;
+const FLOOR = height*.666;
 const NEXT_BLOCK_LEFT = RIGHT_WALL+100;
 const NEXT_BLOCK_TOP = height*.25;
 
