@@ -13,6 +13,10 @@ function preload() {
   this.load.path = '../assets/json/';
   this.load.json('shapes', 'shapes.json');
   this.load.start();
+  this.scale.scaleMode = Phaser.ScaleManager.SHOW_ALL;
+  this.scale.pageAlignHorizontally = true;
+  this.scale.pageAlignVertically = true;
+
 }
 
 function loadStart() {

@@ -1,12 +1,11 @@
-var game = new Phaser.Game(window.innerWidth, window.innerHeight * window.devicePixelRatio,
+var game = new Phaser.Game(window.innerWidth * window.devicePixelRatio, window.innerHeight * window.devicePixelRatio,
    Phaser.AUTO, 'phaser-example', 
 {preload: preload, create: create, update: update });
 
 
 var width = game.width;
 var height = game.height;
-
-
+ 
 function create() {
   if (!startGame) mainMenuCreate(this);
   else gameCreate();
@@ -19,7 +18,6 @@ const NEXT_BLOCK_TOP = height*.25;
 
 function gameCreate() {
  graphics = game.add.graphics(0,0);
-
  graphics.beginFill(0xB4B4B4, 1.0);
  graphics.drawRect(0, 0, width, game.height);
   graphics.beginFill(0x000000, 1.0);

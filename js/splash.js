@@ -1,13 +1,13 @@
 function mainMenuCreate(scene) {
   splash = scene.add.image(0, 0, 'splash');
   splash.anchor.setTo(0, 0);
-  splash.width = game.width;
-  splash.height = game.height;
+  //splash.width = game.width;
+  //splash.height = game.height;
   splash.smoothed = true;
   splash.inputEnabled = true;
-  maxxdaddy = game.add.image(game.width*.35, game.height * 0.8, 'maxxdaddy');
-  maxxdaddy.width = game.width*.25;
-  maxxdaddy.height = game.height*.1;
+  maxxdaddy = game.add.image(0,splash.height, 'maxxdaddy');
+  // maxxdaddy.width = game.width*.25;
+  // maxxdaddy.height = game.height*.1;
   splash.events.onInputDown.add(start, this);
 
   game.input.keyboard.onUpCallback = function (e) {
