@@ -5,17 +5,17 @@ function preload() {
   loadText = game.add.text(32, 32, '', {
     fill: '#ffffff',
   });
-  this.load.path = '../assets/images/';
+  this.load.path = './assets/images/';
   this.load.image('splash', 'splash.png');
   this.load.image('maxxdaddy', 'maxxdaddy.gif');
   this.load.spritesheet('blocks', 'blocks.png', 20,20,7);
   this.load.image('arrow', 'arrow.png');
-  this.load.path = '../assets/json/';
+  this.load.path = './assets/json/';
   this.load.json('shapes', 'shapes.json');
   this.load.start();
-  this.scale.scaleMode = Phaser.ScaleManager.SHOW_ALL;
-  this.scale.pageAlignHorizontally = true;
-  this.scale.pageAlignVertically = true;
+  // this.scale.scaleMode = Phaser.ScaleManager.SHOW_ALL;
+  // this.scale.pageAlignHorizontally = true;
+  // this.scale.pageAlignVertically = true;
 
 }
 

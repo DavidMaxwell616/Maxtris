@@ -1,4 +1,4 @@
-var game = new Phaser.Game(window.innerWidth * window.devicePixelRatio, window.innerHeight * window.devicePixelRatio,
+var game = new Phaser.Game(WIDTH , HEIGHT ,
    Phaser.AUTO, 'phaser-example', 
 {preload: preload, create: create, update: update });
 
@@ -10,11 +10,7 @@ function create() {
   if (!startGame) mainMenuCreate(this);
   else gameCreate();
 }
-const RIGHT_WALL = 250;
-const LEFT_WALL = 50;
-const FLOOR = height*.666;
-const NEXT_BLOCK_LEFT = RIGHT_WALL+100;
-const NEXT_BLOCK_TOP = height*.25;
+
 
 function gameCreate() {
  graphics = game.add.graphics(0,0);
@@ -29,7 +25,7 @@ function gameCreate() {
  
  game.add.text(
   NEXT_BLOCK_LEFT-8,
-height * 0.09,
+NEXT_BLOCK_TOP-38,
 "MAXTRIS!",   { 
   font: "bold 32px Arial", 
   fill: "#7F6A00", 
@@ -38,8 +34,8 @@ height * 0.09,
 
 game.add.text(
     NEXT_BLOCK_LEFT-10,
-  height * 0.08,
-  "MAXTRIS!",   { 
+    NEXT_BLOCK_TOP-40,
+    "MAXTRIS!",   { 
     font: "bold 32px Arial", 
     fill: "#ffff2d", 
     align: "center" 
@@ -47,7 +43,7 @@ game.add.text(
 
   game.add.text(
     NEXT_BLOCK_LEFT+17,
-  height * 0.485,
+    NEXT_BLOCK_TOP+110,
   'NEXT BRICK', 
   {  font: "bold 15px Arial", 
     fill: "#7F6A00", 
@@ -56,17 +52,26 @@ game.add.text(
   
   game.add.text(
   NEXT_BLOCK_LEFT+15,
-  height * 0.48,
+  NEXT_BLOCK_TOP+108,
   'NEXT BRICK', 
   { 
     font: "bold 15px Arial", 
     fill: "#ffff2d", 
     align: "center" 
   });
-
+  scoreText2 = game.add.text(
+    NEXT_BLOCK_LEFT+20,
+    NEXT_BLOCK_TOP+140,
+    'SCORE: ' + score, 
+    { 
+      font: "bold 15px Arial", 
+      fill: "#7F6A00", 
+      align: "center" 
+    });
+  
 scoreText = game.add.text(
   NEXT_BLOCK_LEFT+20,
-  height * 0.55,
+  NEXT_BLOCK_TOP+138,
   'SCORE: ' + score, 
   { 
     font: "bold 15px Arial", 
@@ -74,9 +79,19 @@ scoreText = game.add.text(
     align: "center" 
   });
 
+  highScoreText2 = game.add.text(
+    NEXT_BLOCK_LEFT+5,
+    NEXT_BLOCK_TOP+160,
+    'HIGH SCORE: ' + highScore, 
+    { 
+      font: "bold 15px Arial", 
+      fill: "#7F6A00", 
+       align: "center" 
+    });
+
 highScoreText = game.add.text(
   NEXT_BLOCK_LEFT+5,
-  height * 0.6,
+  NEXT_BLOCK_TOP+158,
   'HIGH SCORE: ' + highScore, 
   { 
     font: "bold 15px Arial", 
@@ -139,7 +154,7 @@ for(i = 0; i < BOARD_HEIGHT; i++) {
 
 function setUpArrows(game) {
   var midX = NEXT_BLOCK_LEFT+80;
-  var midY = height*.75;
+  var midY =  NEXT_BLOCK_TOP+240;
   arrowRight = game.add.button(midX+40, midY+40, 'arrow');
   arrowRight.anchor.setTo(1, 1);
   arrowRight.scale.setTo(.5, .5);
@@ -296,9 +311,11 @@ GameOver = false;
 
 function updateScore(){
   scoreText.setText('SCORE: ' + score);
+  scoreText2.setText('SCORE: ' + score);
   if(score>highScore)
   highScore = score;
   highScoreText.setText('HIGH SCORE: ' + highScore);
+  highScoreText2.setText('HIGH SCORE: ' + highScore);
 }
 
 function getNextSpriteLocation(block) {

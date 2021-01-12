@@ -1,7 +1,8 @@
 function mainMenuCreate(scene) {
+  game.stage.backgroundColor = "#000000";
   splash = scene.add.image(0, 0, 'splash');
   splash.anchor.setTo(0, 0);
-  //splash.width = game.width;
+  splash.width = game.width;
   //splash.height = game.height;
   splash.smoothed = true;
   splash.inputEnabled = true;

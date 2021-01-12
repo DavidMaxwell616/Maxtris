@@ -1,6 +1,14 @@
+const WIDTH = 640;
+const HEIGHT = 480;
 const FIELD_WIDTH = 15;
 const FIELD_HEIGHT = 20;
 const BLOCK_SIZE = 20;
+const RIGHT_WALL = 250;
+const LEFT_WALL = 50;
+const FLOOR = HEIGHT*.83;
+const NEXT_BLOCK_LEFT = RIGHT_WALL+20;
+const NEXT_BLOCK_TOP = HEIGHT*.1;
+
 var objectData;
 var currentBlocks;
 var nextBlocks;
@@ -22,6 +30,9 @@ var nextBlock;
 var scoreText;
 var highScoreText;
 var gameOverText;
+var scoreText2;
+var highScoreText2;
+var gameOverText2;
 
 function Shape(){
   type= null;
