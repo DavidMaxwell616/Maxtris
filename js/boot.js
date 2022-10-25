@@ -24,15 +24,15 @@ var score = 0;
 var timer = 0;
 var speed = 50;
 var nextBlockNum;
-var highScore = 0;
+var highScore;
+var highScorer;
 var newBlock;
 var nextBlock;
 var scoreText;
 var highScoreText;
+var highScorerText;
 var gameOverText;
-var scoreText2;
-var highScoreText2;
-var gameOverText2;
+var shadowColor = "#7F6A00";
 
 function Shape(){
   type= null;

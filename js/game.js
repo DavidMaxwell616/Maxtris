@@ -13,7 +13,22 @@ function create() {
 
 
 function gameCreate() {
- graphics = game.add.graphics(0,0);
+  var highscores = JSON.parse(localStorage.getItem(localStorageName));
+  if(highscores.HighScore==null)
+  {
+    var HighScoreData = 
+    {
+       "HighScore":0,
+       "HighScoreName":"player"
+    }
+    localStorage.setItem(localStorageName, JSON.stringify(HighScoreData ));
+  }
+  else{
+    highScore = highscores.HighScore;
+    highScorer = highscores.HighScoreName;
+  }
+
+  graphics = game.add.graphics(0,0);
  graphics.beginFill(0xB4B4B4, 1.0);
  graphics.drawRect(0, 0, width, game.height);
   graphics.beginFill(0x000000, 1.0);
@@ -22,16 +37,6 @@ function gameCreate() {
 
  shapesJSON = game.cache.getJSON('shapes');
  shapes = shapesJSON.shapes;
- 
- game.add.text(
-  NEXT_BLOCK_LEFT-8,
-NEXT_BLOCK_TOP-38,
-"MAXTRIS!",   { 
-  font: "bold 32px Arial", 
-  fill: "#7F6A00", 
-  align: "center" 
-});
-
 game.add.text(
     NEXT_BLOCK_LEFT-10,
     NEXT_BLOCK_TOP-40,
@@ -42,32 +47,15 @@ game.add.text(
   });
 
   game.add.text(
-    NEXT_BLOCK_LEFT+17,
-    NEXT_BLOCK_TOP+110,
-  'NEXT BRICK', 
-  {  font: "bold 15px Arial", 
-    fill: "#7F6A00", 
-    align: "center" 
-  });
-  
-  game.add.text(
   NEXT_BLOCK_LEFT+15,
   NEXT_BLOCK_TOP+108,
   'NEXT BRICK', 
   { 
     font: "bold 15px Arial", 
     fill: "#ffff2d", 
-    align: "center" 
+    align: "center" ,
+    textShadow: "2px 2px 2px #ff0000,20px 5px 2px #F1F1F1",
   });
-  scoreText2 = game.add.text(
-    NEXT_BLOCK_LEFT+20,
-    NEXT_BLOCK_TOP+140,
-    'SCORE: ' + score, 
-    { 
-      font: "bold 15px Arial", 
-      fill: "#7F6A00", 
-      align: "center" 
-    });
   
 scoreText = game.add.text(
   NEXT_BLOCK_LEFT+20,
@@ -76,45 +64,46 @@ scoreText = game.add.text(
   { 
     font: "bold 15px Arial", 
     fill: "#ffff2d", 
-    align: "center" 
+    align: "center" ,
+    textShadow: "2px 2px 2px #ff0000,20px 5px 2px #F1F1F1",
   });
-
-  highScoreText2 = game.add.text(
-    NEXT_BLOCK_LEFT+5,
-    NEXT_BLOCK_TOP+160,
-    'HIGH SCORE: ' + highScore, 
-    { 
-      font: "bold 15px Arial", 
-      fill: "#7F6A00", 
-       align: "center" 
-    });
 
 highScoreText = game.add.text(
   NEXT_BLOCK_LEFT+5,
-  NEXT_BLOCK_TOP+158,
+  NEXT_BLOCK_TOP+188,
   'HIGH SCORE: ' + highScore, 
   { 
     font: "bold 15px Arial", 
     fill: "#ffff2d", 
-    align: "center" 
+    align: "center" ,
+    textShadow: "2px 2px 2px #ff0000,20px 5px 2px #F1F1F1",
   });
 
-gameOverText = game.add.text(
+  highScorerText = game.add.text(
+    NEXT_BLOCK_LEFT+5,
+    NEXT_BLOCK_TOP+208,
+    'HIGH SCORER: ' + highScorer, 
+    { 
+      font: "bold 15px Arial", 
+      fill: "#ffff2d", 
+      align: "center" ,
+      textShadow: "2px 2px 2px #ff0000,20px 5px 2px #F1F1F1",
+  });
+  
+  gameOverText = game.add.text(
   NEXT_BLOCK_LEFT+70,
   height * 0.8,
   "G A M E  O V E R\n Click Here to Restart", 
   { 
     font: "bold 23px Arial", 
     fill: "#ff0044", 
-    align: "center" 
+    align: "center" ,
+    textShadow: "2px 2px 2px #ff0000,20px 5px 2px #F1F1F1",
   });
 gameOverText.anchor.set(0.5);
 gameOverText.inputEnabled = true;
 gameOverText.events.onInputDown.add(restartGame, this);
 gameOverText.visible = false;
-
-highScore = localStorage.getItem(localStorageName) == null ? 0 :
-            localStorage.getItem(localStorageName);
 
 setUpArrows(game);
 
@@ -154,7 +143,7 @@ for(i = 0; i < BOARD_HEIGHT; i++) {
 
 function setUpArrows(game) {
   var midX = NEXT_BLOCK_LEFT+80;
-  var midY =  NEXT_BLOCK_TOP+240;
+  var midY =  NEXT_BLOCK_TOP+280;
   arrowRight = game.add.button(midX+40, midY+40, 'arrow');
   arrowRight.anchor.setTo(1, 1);
   arrowRight.scale.setTo(.5, .5);
@@ -309,14 +298,7 @@ function restartGame(){
 GameOver = false;
 };
 
-function updateScore(){
-  scoreText.setText('SCORE: ' + score);
-  scoreText2.setText('SCORE: ' + score);
-  if(score>highScore)
-  highScore = score;
-  highScoreText.setText('HIGH SCORE: ' + highScore);
-  highScoreText2.setText('HIGH SCORE: ' + highScore);
-}
+
 
 function getNextSpriteLocation(block) {
   var spriteX, spriteY;
@@ -367,13 +349,25 @@ function update() {
     return;
   if(turnCounter >= turnLength) {
       if(!canMoveShape(DOWN) && activeShape.centerY==0){
+        //GAME OVER////////////////////////////////////////
         GameOver = true;
-        localStorage.setItem(localStorageName, highScore);
+        if(score>highScore){
+          highScore = score;
+          var name = prompt("You Got The High Score!! Please Enter Your Name");
+          var HighScoreData = 
+          {
+             "HighScore": highScore,
+             "HighScoreName": name
+          }
+          localStorage.setItem(localStorageName, JSON.stringify(HighScoreData ));
+          highScoreText.setText('HIGH SCORE: ' + highScore);
+          highScorerText.setText('HIGH SCORER: ' + highScorer);
+        }
         gameOverText.visible = true;
         return; 
       }
   if(activeShape !== null && canMoveShape(DOWN)) {
-      updateScore();
+      scoreText.setText('SCORE: ' + score);
       moveShape(DOWN);
   } 
   else 
