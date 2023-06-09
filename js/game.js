@@ -14,12 +14,12 @@ function create() {
 
 function gameCreate() {
   var highscores = JSON.parse(localStorage.getItem(localStorageName));
-  if(highscores.HighScore==null)
+  if(highscores==null)
   {
     var HighScoreData = 
     {
        "HighScore":0,
-       "HighScoreName":"player"
+       "HighScoreName":""
     }
     localStorage.setItem(localStorageName, JSON.stringify(HighScoreData ));
   }
@@ -29,17 +29,18 @@ function gameCreate() {
   }
 
   graphics = game.add.graphics(0,0);
- graphics.beginFill(0xB4B4B4, 1.0);
- graphics.drawRect(0, 0, width, game.height);
+  graphics.beginFill(0xB4B4B4, 1.0);
+  graphics.drawRect(0, 0, width, game.height);
   graphics.beginFill(0x000000, 1.0);
   graphics.drawRect(LEFT_WALL,0, RIGHT_WALL-LEFT_WALL, FLOOR);
   graphics.drawRect(NEXT_BLOCK_LEFT, NEXT_BLOCK_TOP, 120, 100);
 
  shapesJSON = game.cache.getJSON('shapes');
  shapes = shapesJSON.shapes;
-game.add.text(
-    NEXT_BLOCK_LEFT-10,
-    NEXT_BLOCK_TOP-40,
+
+ game.add.text(
+    (NEXT_BLOCK_LEFT-10),
+    (NEXT_BLOCK_TOP/2-16),
     "MAXTRIS!",   { 
     font: "bold 32px Arial", 
     fill: "#ffff2d", 
@@ -47,8 +48,8 @@ game.add.text(
   });
 
   game.add.text(
-  NEXT_BLOCK_LEFT+15,
-  NEXT_BLOCK_TOP+108,
+  (NEXT_BLOCK_LEFT+15),
+  (NEXT_BLOCK_TOP+108),
   'NEXT BRICK', 
   { 
     font: "bold 15px Arial", 
@@ -58,8 +59,8 @@ game.add.text(
   });
   
 scoreText = game.add.text(
-  NEXT_BLOCK_LEFT+20,
-  NEXT_BLOCK_TOP+138,
+  (NEXT_BLOCK_LEFT+20),
+  (NEXT_BLOCK_TOP+138),
   'SCORE: ' + score, 
   { 
     font: "bold 15px Arial", 
@@ -69,8 +70,8 @@ scoreText = game.add.text(
   });
 
 highScoreText = game.add.text(
-  NEXT_BLOCK_LEFT+5,
-  NEXT_BLOCK_TOP+188,
+  (NEXT_BLOCK_LEFT+5),
+  (NEXT_BLOCK_TOP+188),
   'HIGH SCORE: ' + highScore, 
   { 
     font: "bold 15px Arial", 
@@ -80,8 +81,8 @@ highScoreText = game.add.text(
   });
 
   highScorerText = game.add.text(
-    NEXT_BLOCK_LEFT+5,
-    NEXT_BLOCK_TOP+208,
+    (NEXT_BLOCK_LEFT+5),
+    (NEXT_BLOCK_TOP+208),
     'HIGH SCORER: ' + highScorer, 
     { 
       font: "bold 15px Arial", 
@@ -91,8 +92,8 @@ highScoreText = game.add.text(
   });
   
   gameOverText = game.add.text(
-  NEXT_BLOCK_LEFT+70,
-  height * 0.8,
+  (NEXT_BLOCK_LEFT+(BLOCK_SIZE*2*scale)),
+  (FLOOR-(BLOCK_SIZE*scale)),
   "G A M E  O V E R\n Click Here to Restart", 
   { 
     font: "bold 23px Arial", 
@@ -183,15 +184,13 @@ function setUpArrows(game) {
 }
 
 function randomizeShape(shape) {
-    
   shape.type = game.rnd.integerInRange(0, 6);
-  
   initBlocks(shape);
 };
 
 function initBlocks(shape){
   var i;
-shape.blocks = [];
+ shape.blocks = [];
   for(i = 0; i < NUM_BLOCKS_IN_SHAPE; i++) {
     var Block = {
       id: i,
@@ -211,7 +210,9 @@ function previewShape(i, newX, newY, newColor) {
   block.color = newColor;
     var spriteLocation = getNextSpriteLocation(block);
     block.sprite = game.add.sprite(spriteLocation.x, spriteLocation.y, 'blocks', newColor);
-  };
+    block.sprite.width *=scale;
+    block.sprite.height *=scale;
+ };
 
   
 
@@ -256,6 +257,9 @@ var block = activeShape.blocks.find(block => block.id === i);
   
   var spriteLocation = getSpriteLocation(block.x,block.y);   
    block.sprite = game.add.sprite(spriteLocation.x, spriteLocation.y, 'blocks',newColor);
+  block.sprite.width *=scale;
+  block.sprite.height *=scale;
+ 
   };
 
 function getSpriteLocation(x,y) {
@@ -302,9 +306,8 @@ GameOver = false;
 
 function getNextSpriteLocation(block) {
   var spriteX, spriteY;
-  spriteX = NEXT_BLOCK_LEFT- 40 + (block.x * BLOCK_SIZE);
-  spriteY = NEXT_BLOCK_TOP +20+ block.y * BLOCK_SIZE;
-  
+  spriteX = NEXT_BLOCK_LEFT - (BLOCK_SIZE*2*scale) + (block.x * BLOCK_SIZE);
+  spriteY = (NEXT_BLOCK_TOP + (BLOCK_SIZE*scale) + block.y * BLOCK_SIZE)-(BLOCK_SIZE*scale);
   return {"x": spriteX, "y": spriteY};
 };
 

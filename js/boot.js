@@ -1,13 +1,24 @@
-const WIDTH = 640;
-const HEIGHT = 480;
-const FIELD_WIDTH = 15;
-const FIELD_HEIGHT = 20;
-const BLOCK_SIZE = 20;
-const RIGHT_WALL = 250;
-const LEFT_WALL = 50;
-const FLOOR = HEIGHT*.83;
-const NEXT_BLOCK_LEFT = RIGHT_WALL+20;
-const NEXT_BLOCK_TOP = HEIGHT*.1;
+var scale = 1.5;
+
+if (navigator.userAgent.match(/Android/i)
+ || navigator.userAgent.match(/webOS/i)
+ || navigator.userAgent.match(/iPhone/i)
+ || navigator.userAgent.match(/iPad/i)
+ || navigator.userAgent.match(/iPod/i)
+ || navigator.userAgent.match(/BlackBerry/i)
+ || navigator.userAgent.match(/Windows Phone/i)) {
+scale = 1.5;
+}
+var WIDTH = 640 * scale;
+var HEIGHT = 480 * scale;
+var FIELD_WIDTH = 15 * scale;
+var FIELD_HEIGHT = 20 * scale;
+var BLOCK_SIZE = 20 * scale;
+var RIGHT_WALL = 250 * scale;
+var LEFT_WALL = 50 * scale;
+var FLOOR = 400 * scale;
+var NEXT_BLOCK_LEFT = RIGHT_WALL+20;
+var NEXT_BLOCK_TOP = HEIGHT*(.1*scale) ;
 
 var objectData;
 var currentBlocks;
