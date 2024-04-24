@@ -33,7 +33,7 @@ var	spaceKey;
 var block;
 var score = 0;
 var timer = 0;
-var speed = 50;
+var timerInterval = 50;
 var nextBlockNum;
 var highScore;
 var highScorer;
@@ -58,8 +58,7 @@ function Shape(){
 var shapesJSON= null;
 var board = null;
 var localStorageName = "maxtris";
-var turnLength = 10;
-var turnCounter = 0;
+
 
 var isUpdatingAfterRowClear = false;
 var startGame = false;
