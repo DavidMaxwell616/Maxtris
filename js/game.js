@@ -20,6 +20,8 @@ function gameCreate() {
       "HighScore": 0,
       "HighScoreName": ""
     }
+    highScore = 0;
+    highScorer = "";
     localStorage.setItem(localStorageName, JSON.stringify(HighScoreData));
   }
   else {
@@ -29,7 +31,7 @@ function gameCreate() {
 
   graphics = game.add.graphics(0, 0);
   graphics.beginFill(0xB4B4B4, 1.0);
-  graphics.drawRect(0, 0, width, game.height);
+  graphics.drawRect(0, 0, game.width, game.height);
   graphics.beginFill(0x000000, 1.0);
   graphics.drawRect(LEFT_WALL, 0, RIGHT_WALL - LEFT_WALL, FLOOR);
   graphics.drawRect(NEXT_BLOCK_LEFT, NEXT_BLOCK_TOP, 120, 100);
@@ -79,9 +81,9 @@ function gameCreate() {
   activateShape(activeShape);
   game.add.text(
     (NEXT_BLOCK_LEFT - 10),
-    (NEXT_BLOCK_TOP / 2 - 16),
+    (NEXT_BLOCK_TOP / 2 - 36),
     "MAXTRIS!", {
-    font: "bold 32px Arial",
+    font: "bold 64px Arial",
     fill: "#ffff2d",
     align: "center"
   });
@@ -91,37 +93,37 @@ function gameCreate() {
     (NEXT_BLOCK_TOP + 108),
     'NEXT BRICK',
     {
-      font: "bold 15px Arial",
+      font: "bold 32px Arial",
       fill: "#ffff2d",
       align: "center",
     });
 
   scoreText = game.add.text(
-    (NEXT_BLOCK_LEFT + 20),
-    (NEXT_BLOCK_TOP + 138),
+    (NEXT_BLOCK_LEFT + 10),
+    (NEXT_BLOCK_TOP + 160),
     'SCORE: ' + score,
     {
-      font: "bold 15px Arial",
+      font: "bold 45px Arial",
       fill: "#ffff2d",
       align: "center",
     });
 
   highScoreText = game.add.text(
     (NEXT_BLOCK_LEFT + 5),
-    (NEXT_BLOCK_TOP + 188),
+    (NEXT_BLOCK_TOP + 240),
     'HIGH SCORE: ' + highScore,
     {
-      font: "bold 15px Arial",
+      font: "bold 42px Arial",
       fill: "#ffff2d",
       align: "center",
     });
 
   highScorerText = game.add.text(
     (NEXT_BLOCK_LEFT + 5),
-    (NEXT_BLOCK_TOP + 208),
+    (NEXT_BLOCK_TOP + 288),
     'HIGH SCORER: ' + highScorer,
     {
-      font: "bold 15px Arial",
+      font: "bold 42px Arial",
       fill: "#ffff2d",
       align: "center",
     });
@@ -131,7 +133,7 @@ function gameCreate() {
     (FLOOR - (BLOCK_SIZE * scale)),
     "G A M E  O V E R\n Click Here to Restart",
     {
-      font: "bold 23px Arial",
+      font: "bold 53px Arial",
       fill: "#ff0044",
       align: "center",
     });
@@ -142,8 +144,8 @@ function gameCreate() {
 };
 
 function setUpArrows(game) {
-  var midX = NEXT_BLOCK_LEFT + 80;
-  var midY = NEXT_BLOCK_TOP + 280;
+  var midX = NEXT_BLOCK_LEFT + 140;
+  var midY = NEXT_BLOCK_TOP + 420;
   arrowRight = game.add.button(midX + 40, midY + 40, 'arrow');
   arrowRight.anchor.setTo(1, 1);
   arrowRight.scale.setTo(.5, .5);
